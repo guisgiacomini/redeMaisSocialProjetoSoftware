@@ -1,6 +1,9 @@
 # Telas UC002
 ---
-### TELA 1 - Solicitar Afiliação
+### Fluxo principal
+
+1. Candidato informa seu email e CPF (CNPJ, se for pessoa jurídica) e solicita afiliação
+
 ```plantuml
 @startsalt
 scale 1.5
@@ -15,7 +18,7 @@ scale 1.5
 }
 @endsalt
 ```
-### TELA 2 - Formulário de identificação
+4. Candidato preenche formulário de identificação e submete
 
 ```plantuml
 @startsalt
@@ -39,7 +42,7 @@ scale 1.5
 
 ```
 
-### TELA 3 - Formulário de perfil, habilidades e interesses
+7. Candidato preenche o formulário e submete
 
 ```plantuml
 @startsalt
@@ -54,7 +57,7 @@ scale 1.5
 
 ```
 
-### TELA 4 - Termos de compromisso
+10. Candidato aceita as diretrizes estabelecidas no termo de aceite
 
 ```plantuml
 @startsalt
@@ -78,7 +81,7 @@ scale 1.5
 
 ```
 
-### TELA 5 - Validação pendente
+13. Sistema exibe mensagem solicitando a validação do e-mail informado
 ```plantuml
 @startsalt
 scale 1.5
@@ -94,7 +97,7 @@ scale 1.5
 @endsalt
 ```
 
-### TELA 6  - Validação em análise
+16. Sistema informa a situação do candidato que está esperando a aprovação de sua afiliação pela Rede Mais Social e deve receber liberação em breve
 
 ```plantuml
 @startsalt
@@ -109,6 +112,101 @@ scale 1.5
 }
 @endsalt
 ```
+
+## Fluxos Alternativos
+
+Email ou CPF(ou CNPJ) encontrados 
+
+```plantuml 
+
+@startsalt
+scale 1.5
+{
+  title "Aviso - Cadastro Existente"
+  {
+    <b>Atenção!</b>
+    O E-mail ou CPF/CNPJ informado já está cadastrado em nossa base de dados.
+    Se você já é um voluntário, entre em contato com o suporte.
+  }
+  [Voltar para a Página Inicial]
+}
+@endsalt
+
+```
+
+Dados inválidos ou não informados
+
+```plantuml 
+
+@startsalt
+scale 1.5
+{
+  title "Formulário de Afiliação - Identificação"
+  "Nome Completo " |<color:red> Campo obrigatório
+  ^Sexo^Masculino^Feminino^Outro^|<color:red> Campo obrigatório
+  .
+  .
+  .
+  "Data de Nascimento " |<color:red> Campo obrigatório
+  "Nacionalidade " |<color:red> Campo obrigatório
+  "Endereço Residencial " |<color:red> Campo obrigatório
+  "Endereço Comercial" |<color:red> Campo obrigatório
+  "Profissão " |<color:red> Campo obrigatório
+  [Continuar]
+}
+@endsalt
+```
+
+Candidato anexa certidões e preenche formulário de identificação do representante legal e submete
+
+```plantuml
+@startsalt
+scale 1.5
+{+
+  <b>Dados do Representante Legal</b>
+  "Nome Completo" 
+  "E-mail " 
+  "CPF "
+  .
+  {+ 
+    Anexar certidões 
+  }
+
+  [Continuar]
+}
+@endsalt
+```
+
+Candidato não aceita diretrizes
+
+```plantuml
+@startsalt
+scale 1.5
+{
+  {+
+  <b> Você não aceitou os termos e diretrizes
+  .
+  [Retornar à página inicial]
+  }
+}
+@endsalt
+```
+
+ Candidato Não acessa Link de Validação no prazo
+ ```plantuml
+@startsalt
+scale 1.5
+{
+  {+
+  <b> Você ainda não validou seu E-mail
+  .
+  [Enviar link de validação]
+  }
+}
+@endsalt
+```
+
+
 
 # Telas UC003
 
