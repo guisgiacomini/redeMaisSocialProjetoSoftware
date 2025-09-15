@@ -186,7 +186,7 @@ scale 1.25
     - Experiência com Confeitaria.
 
     **Situação**: 
-    ^Reprovado.^
+    ^Rejeitado.^
 
     [Salvar]
     .
@@ -201,7 +201,7 @@ scale 1.5
 {+
     .
     **Candidato**: Pietro Santana dos Santos
-    **Situação**: Reprovado
+    **Situação**: Rejeitado
     .
     **Motivo da rejeição:**
     {+
