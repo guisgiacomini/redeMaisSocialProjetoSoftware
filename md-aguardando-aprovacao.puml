@@ -1,0 +1,13 @@
+@startsalt
+scale 1.5
+{+
+    .
+    title Aguardando aprovação:
+    .  
+    <&person> Pietro Santana dos Santos |  [Ver perfil] 
+    <&person> Ana Lima Kirstp | [Ver perfil] 
+    <&person> Paula Vieira Toronto | [Ver perfil] 
+    <&person> Luís Rocha da Silva | [Ver perfil] 
+    .
+}
+@endsalt

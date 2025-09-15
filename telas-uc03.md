@@ -2,7 +2,7 @@
 
 ### Fluxo Principal
 2. Sistema apresenta relação de candidatos pendentes de aprovação: 
-```plantuml
+```plantuml:md-aguardando-aprovacao
 @startsalt
 scale 1.5
 {+
@@ -17,6 +17,8 @@ scale 1.5
 }
 @endsalt
 ```
+![](./md-aguardando-aprovacao)
+
 4. Sistema exibe informações detalhadas do candidato
 ```plantuml
 @startsalt
