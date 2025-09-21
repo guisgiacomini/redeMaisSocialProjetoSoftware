@@ -1,0 +1,72 @@
+@startuml
+class Candidato {
+    -nome
+    -cpf_cnpj
+}
+
+class ONG { 
+    -nome
+}
+
+class Voluntário extends Candidato {
+
+}
+
+class Campanha {
+    -nome
+    -descricao
+}
+
+class Afiliacao {
+    -dataDeAfiliacao
+}
+
+class Perfil {
+
+}
+
+class Habilidade {
+    -descricao
+}
+
+class Interesse {
+    -descricao
+}
+
+class Representante {
+    
+}
+
+class Email {
+    -endereco
+}
+
+class Recomendacao {
+
+}
+
+class Aprovacao {
+    -data
+    -status
+    -motivo
+}
+
+Perfil "1..*" -- "1..*" Habilidade: contém
+Perfil "1..*" -- "1..*" Interesse: possui
+
+Candidato "1" -- "1" Afiliacao: possui
+
+Voluntário "1" -- "1" Perfil: possui
+Voluntário "1" *-- "1" Email: possui
+
+ONG "1" *-- "0..*" Campanha: abre
+Campanha "1..*" -- "1..*" Perfil: contém
+
+Representante "1" -- "1..*" Afiliacao: avalia
+Representante "1" -- "1..*" Aprovacao: solicita
+Representante "1" -- "1..*" Perfil: especifica
+Representante "1" -- "1..*" Recomendacao: solicita
+
+Recomendacao "0..*" -- "0..*" ONG: apresenta
+
+@enduml
