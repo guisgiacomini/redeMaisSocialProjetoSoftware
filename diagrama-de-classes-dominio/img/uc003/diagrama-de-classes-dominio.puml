@@ -60,7 +60,7 @@ Perfil "1..*" -- "1..*" Habilidade: contém
 Perfil "1..*" -- "1..*" Interesse: possui
 
 Candidato "1" -- "1" Afiliacao: possui
-Solicitante "1" -- "0..*" CertidaoCNPJ: anexa
+Candidato "1" -- "0..*" CertidaoCNPJ: anexa
 
 Voluntario "1" -- "1" Perfil: possui
 Voluntario "1" *-- "1" Email: possui
