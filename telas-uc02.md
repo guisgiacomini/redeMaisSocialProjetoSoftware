@@ -11,7 +11,7 @@ scale 1.5
   title "Solicitar Afiliação"
   "E-mail " 
   "CPF (ou CNPJ) "
-  ^Tipo de Pessoa^Pessoa Física^Pessoa Jurídia^
+  ^Tipo de Pessoa^Pessoa Física^Pessoa Jurídica^
   .
   .
   [Solicitar Afiliação]

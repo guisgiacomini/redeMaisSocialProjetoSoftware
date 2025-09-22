@@ -8,7 +8,7 @@ class ONG {
     -nome
 }
 
-class Voluntário extends Candidato {
+class Voluntario extends Candidato {
 
 }
 
@@ -51,13 +51,17 @@ class Aprovacao {
     -motivo
 }
 
+class CertidoesCNPJ {
+
+}
+
 Perfil "1..*" -- "1..*" Habilidade: contém
 Perfil "1..*" -- "1..*" Interesse: possui
 
 Candidato "1" -- "1" Afiliacao: possui
 
-Voluntário "1" -- "1" Perfil: possui
-Voluntário "1" *-- "1" Email: possui
+Voluntario "1" -- "1" Perfil: possui
+Voluntario "1" *-- "1" Email: possui
 
 ONG "1" *-- "0..*" Campanha: abre
 Campanha "1..*" -- "1..*" Perfil: contém
@@ -69,4 +73,7 @@ Representante "1" -- "1..*" Recomendacao: solicita
 
 Recomendacao "0..*" -- "0..*" ONG: apresenta
 
+Afiliacao "1" -- "1" Aprovacao : "passa por"
+
 @enduml
+
