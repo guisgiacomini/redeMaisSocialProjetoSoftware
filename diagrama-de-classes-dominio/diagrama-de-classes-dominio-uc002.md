@@ -1,77 +1,105 @@
 ```plantuml
 @startuml
 
-title Diagrama de Classes 
-
-skinparam classAttributeIconSize 0
-hide empty members
-
-class Candidato {
-  -nome: String
-  -cpf_cnpj: String
+class Entidade {
+  -nome
 }
 
-class Voluntario extends Candidato {
+class Papel 
+
+class Pessoa
+
+class Fisica extends Pessoa {
+  -cpf
 }
 
-class ONG extends Candidato {
+class Juridica extends Pessoa{
+  -cnpj
+}
+
+class Candidato extends Papel{
+}
+
+class ONG { 
+    -nome
+}
+
+class Voluntario extends Papel{
+
+}
+
+class Campanha {
+    -nome
+    -descricao
 }
 
 class Afiliacao {
- -dataSolicitacao: Date
+    -dataDeAfiliacao
 }
 
 class Perfil {
+
 }
 
 class Habilidade {
- -descricao: String
+    -descricao
 }
 
 class Interesse {
- -descricao: String
+    -descricao
 }
 
-class Validacao {
- -data: Date
- -status: String
- -link: String
-}
-
-class Aprovacao {
- -data: Date
- -status: String
- -motivo: String
-}
-
-class CertidaoCNPJ {
- -tipo: String
- -arquivo: byte[]
+class Representante {
+    
 }
 
 class Email {
- -endereco: String
+    -endereco
 }
 
+class Recomendacao {
 
+}
 
-Candidato "1" -- "1" Email : "possui"
+class Aprovacao {
+    -data
+    -status
+    -motivo
+}
 
+class CertidaoCNPJ {
+    -nomeArquivo
+    -tipo
+}
 
-Candidato "1" -- "1" Afiliacao : "solicita"
+class TermoDeCompromisso {
+    -texto
+}
 
+Perfil "1..*" o-- "1..*" Habilidade: contém
+Perfil "1..*" o-- "1..*" Interesse: possui
 
-Afiliacao "1" -- "1" Validacao : "requer"
+Entidade "1" -- "1" Papel: possui
+Entidade "1" -- "1" Pessoa: é
+Candidato "1" -- "1" Afiliacao: solicita
+Candidato "1" -- "0..*" CertidaoCNPJ: anexa
+Candidato "1" -- "1" TermoDeCompromisso: aceita
+
+Entidade "1" -- "1" Perfil: possui
+Entidade "1" *-- "1" Email: possui
+
+ONG "1" *-- "0..*" Campanha: abre
+Campanha "1..*" -- "1..*" Perfil: contém
+
+Representante "1" -- "1..*" Afiliacao: avalia
+Representante "1" -- "1..*" Aprovacao: solicita
+Representante "1" -- "1..*" Perfil: especifica
+Representante "1" -- "1..*" Recomendacao: solicita
+
+Recomendacao "0..*" -- "0..*" ONG: apresenta
+
 Afiliacao "1" -- "1" Aprovacao : "passa por"
 
-
-Voluntario "1" -- "1" Perfil : "possui"
-
-
-Perfil "1" *-- "0..*" Habilidade
-Perfil "1" *-- "0..*" Interesse
-
-
-ONG "1" -- "1..*" CertidaoCNPJ : "anexa"
+Voluntario "1" -- "1" Afiliacao: "possui"
 
 @enduml

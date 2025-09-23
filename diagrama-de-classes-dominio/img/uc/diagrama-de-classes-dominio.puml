@@ -1,14 +1,29 @@
 @startuml
-class Candidato {
-    -nome
-    -cpf_cnpj
+
+class Entidade {
+  -nome
+}
+
+class Papel 
+
+class Pessoa
+
+class Fisica extends Pessoa {
+  -cpf
+}
+
+class Juridica extends Pessoa{
+  -cnpj
+}
+
+class Candidato extends Papel{
 }
 
 class ONG { 
     -nome
 }
 
-class Voluntario extends Candidato {
+class Voluntario extends Papel{
 
 }
 
@@ -60,15 +75,17 @@ class TermoDeCompromisso {
     -texto
 }
 
-Perfil "1..*" -- "1..*" Habilidade: contém
-Perfil "1..*" -- "1..*" Interesse: possui
+Perfil "1..*" o-- "1..*" Habilidade: contém
+Perfil "1..*" o-- "1..*" Interesse: possui
 
-Candidato "1" -- "1" Afiliacao: possui
+Entidade "1" -- "1" Papel: possui
+Entidade "1" -- "1" Pessoa: é
+Candidato "1" -- "1" Afiliacao: solicita
 Candidato "1" -- "0..*" CertidaoCNPJ: anexa
 Candidato "1" -- "1" TermoDeCompromisso: aceita
 
-Voluntario "1" -- "1" Perfil: possui
-Voluntario "1" *-- "1" Email: possui
+Entidade "1" -- "1" Perfil: possui
+Entidade "1" *-- "1" Email: possui
 
 ONG "1" *-- "0..*" Campanha: abre
 Campanha "1..*" -- "1..*" Perfil: contém
@@ -82,5 +99,6 @@ Recomendacao "0..*" -- "0..*" ONG: apresenta
 
 Afiliacao "1" -- "1" Aprovacao : "passa por"
 
-@enduml
+Voluntario "1" -- "1" Afiliacao: "possui"
 
+@enduml
