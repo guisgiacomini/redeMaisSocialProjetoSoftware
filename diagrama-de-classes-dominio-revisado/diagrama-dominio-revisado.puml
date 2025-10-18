@@ -1,0 +1,137 @@
+@startuml
+
+class Entidade {
+  -nome
+}
+
+class Papel 
+
+class Pessoa
+
+class Fisica extends Pessoa {
+  -cpf
+}
+
+class Juridica extends Pessoa{
+  -cnpj
+}
+
+class Candidato extends Papel{
+}
+
+class ONG { 
+    -nome
+}
+
+class Voluntario extends Papel{
+
+}
+
+class Campanha {
+    -nome
+    -descricao
+}
+
+class Afiliacao {
+    -dataDeAfiliacao
+    -status
+}
+
+class Perfil {
+
+}
+
+class Habilidade {
+    -descricao
+}
+
+class Interesse {
+    -descricao
+}
+
+class Representante {
+    
+}
+
+class Email {
+    -endereco
+}
+
+class Recomendacao {
+
+}
+
+class Aprovacao {
+    -data
+    -status
+    -motivo
+}
+
+class CertidaoCNPJ {
+    -nomeArquivo
+    -tipo
+}
+
+class Termo {
+    
+}
+
+class CondicaoTermo{
+    -texto
+}
+
+class Aceite {
+ -data
+}
+
+class ItemAceite {
+ 
+}
+
+class PedidoAfiliacao {
+    -status
+    -data
+}
+
+Perfil "1..*" o-- "1..*" Habilidade: contém
+Perfil "1..*" o-- "1..*" Interesse: possui
+
+Entidade "1" -- "1" Papel: possui
+Entidade "1" -- "1" Pessoa: é
+
+Fisica <-- "1" Juridica: representado
+
+Candidato "1" -- "1" Afiliacao: solicita
+Candidato "1" -- "0..*" CertidaoCNPJ: anexa
+Candidato "1..*" -- "1..*" Perfil
+Candidato -- "1" PedidoAfiliacao: Solicita
+Candidato "1" --> "1" Voluntario: Pode se tornar
+
+Entidade "1" -- "1" Perfil: possui
+Entidade "1" *-- "1" Email: possui
+
+ONG "1" *-- "0..*" Campanha: abre
+Campanha "1..*" -- "1..*" Perfil: contém
+
+Representante "1" -- "1..*" Afiliacao: avalia
+Representante "1" -- "1..*" Aprovacao: solicita
+Representante "1" -- "1..*" Perfil: especifica
+Representante "1" -- "1..*" Recomendacao: solicita
+
+Recomendacao "0..*" -- "0..*" ONG: apresenta
+
+Afiliacao "1" -- "1" Aprovacao : "passa por"
+
+Voluntario "1" -- "1" Afiliacao: "possui"
+
+
+PedidoAfiliacao -- "0..1" Termo: contém
+
+Termo "*" -- "1..*" CondicaoTermo: Possui
+
+CondicaoTermo "1" -- "1" Aceite: Gera
+
+Aceite "1..*" -- "1..*" ItemAceite: Possui
+
+
+@enduml
