@@ -1,0 +1,46 @@
+@startuml
+actor "Representante R+S" as representante
+boundary "GUI" as gui <<fronteira>>
+control "AfiliacaoController" as afiliacaoController <<controller>>
+control "CandidatoController" as candidatoController <<controller>>
+control "ONGController" as ongController<<controller>>
+control "AprovacaoController" as aprovacaoController<<controller>>
+collections "PedidoAfiliacao" as pedidoAfiliacao
+collections "Candidatos" as candidatos
+collections "Voluntarios" as voluntarios
+collections "ONGs" as ongs
+collections "Campanhas" as campanhas
+collections "Recomendacoes" as recomendacoes
+entity "Candidato" as candidato
+entity "Voluntario" as voluntario
+
+representante -> gui: aprovaVoluntario(idVoluntario, recomendacao)
+activate gui
+    gui -> aprovacaoController: aprovaVoluntario(idVoluntario, recomendacao)
+    activate aprovacaoController
+        aprovacaoController -> recomendacoes: salvaRecomendacao(recomendacao)
+        activate recomendacoes
+            recomendacoes --> aprovacaoController: recomendacao
+        deactivate recomendacoes
+        aprovacaoController -> voluntarios: procuraVoluntario(idVoluntario)
+        activate voluntarios
+            voluntarios -> voluntario: get(idVoluntario)
+            activate voluntario
+                voluntario --> voluntarios: voluntario
+            deactivate voluntario
+            voluntarios --> aprovacaoController: voluntario
+        
+        aprovacaoController -> aprovacaoController: geraLoginSenhaVoluntario(voluntario)
+        aprovacaoController -> voluntarios: salvaVoluntario(voluntario)
+        
+        deactivate voluntarios
+
+        aprovacaoController -> aprovacaoController: enviaEmailLoginInstrucao(voluntarioEmail, voluntarioLogin, voluntarioSenha)
+        aprovacaoController -> aprovacaoController: enviaEmailResultadoAfiliacaoRecomendacao(voluntarioEmail, recomendacao)
+
+        aprovacaoController --> gui: "successo"
+    deactivate aprovacaoController
+deactivate gui
+    
+
+@enduml

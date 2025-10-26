@@ -1,0 +1,62 @@
+@startuml
+actor "Representante R+S" as representante
+boundary "GUI" as gui <<fronteira>>
+control "AfiliacaoController" as afiliacaoController <<controller>>
+control "CandidatoController" as candidatoController <<controller>>
+control "ONGController" as ongController<<controller>>
+control "AprovacaoController" as aprovacaoController<<controller>>
+collections "PedidoAfiliacao" as pedidoAfiliacao
+collections "Candidatos" as candidatos
+collections "Voluntarios" as voluntarios
+collections "ONGs" as ongs
+collections "Campanhas" as campanhas
+collections "Recomendacoes" as recomendacoes
+entity "Candidato" as candidato
+entity "Voluntario" as voluntario
+
+representante -> gui: solicitaAprovacaoCandidato(id)
+activate gui
+    gui -> candidatoController: solicitaAprovacaoCandidato(id)
+    activate candidatoController
+        candidatoController -> candidatos: buscaCandidato(id)
+        activate candidatos
+            
+            candidatos -> candidato: get(id)
+            activate candidato
+                candidato --> candidatos: candidato
+            deactivate candidato
+
+        candidatos --> candidatoController: candidato
+        deactivate candidatos
+
+        candidatoController -> candidatoController: mudaSituacao(candidato)
+        candidatoController -> voluntarios: salva(voluntario)
+
+        activate voluntarios
+            voluntarios --> candidatoController: voluntario
+        deactivate voluntarios
+
+    candidatoController --> gui: voluntario
+    deactivate candidatoController
+deactivate gui
+
+representante -> gui: solicitaçãoRecomendacaoOngParceira(perfil)
+activate gui
+    gui -> ongController: solicitaçãoRecomendacaoOngParceira(perfil)
+    activate ongController
+        ongController -> ongs: filtroONGDeAcordoComPerfil(perfil)
+        activate ongs
+            ongs --> ongController: ongs
+        deactivate ongs
+        ongController -> campanhas: procuraCampanhasDeOng(ong)
+        activate campanhas
+            campanhas --> ongController: campanhas
+        deactivate campanhas
+
+        ongController -> ongController: criaRecomendacao(ong, campanha)
+        ongController --> gui: recomendação 
+    deactivate ongController
+deactivate gui
+
+
+@enduml

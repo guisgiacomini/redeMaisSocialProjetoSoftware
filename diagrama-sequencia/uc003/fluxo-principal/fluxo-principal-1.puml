@@ -1,0 +1,71 @@
+@startuml
+
+actor "Representante R+S" as representante
+boundary "GUI" as gui <<fronteira>>
+control "AfiliacaoController" as afiliacaoController <<controller>>
+control "CandidatoController" as candidatoController <<controller>>
+control "ONGController" as ongController<<controller>>
+control "AprovacaoController" as aprovacaoController<<controller>>
+collections "PedidoAfiliacao" as pedidoAfiliacao
+collections "Candidatos" as candidatos
+collections "Voluntarios" as voluntarios
+collections "ONGs" as ongs
+collections "Campanhas" as campanhas
+collections "Recomendacoes" as recomendacoes
+entity "Candidato" as candidato
+entity "Voluntario" as voluntario
+
+
+representante -> gui: buscaCandidatosPendentes()
+activate gui
+
+    gui -> afiliacaoController: buscaCandidatosPendentes()
+    activate afiliacaoController
+
+        afiliacaoController -> pedidoAfiliacao: buscaCandidatosPendentes()
+        activate pedidoAfiliacao
+
+            pedidoAfiliacao -> candidato: getCandidato()
+            activate candidato
+                
+                candidato --> pedidoAfiliacao: Candidato
+
+            deactivate candidato
+
+            pedidoAfiliacao --> afiliacaoController: Candidatos
+
+            deactivate pedidoAfiliacao
+
+        afiliacaoController --> gui: Candidatos
+        deactivate afiliacaoController
+
+deactivate gui 
+
+
+representante -> gui: exibeInformacaoDetalhadaCandidato(id)
+activate gui
+
+    gui -> candidatoController: exibeInformacaoDetalhadaCandidato(id)
+    activate candidatoController
+
+        candidatoController -> candidatos: buscaCandidato(id)
+        activate candidatos
+
+            candidatos -> candidato: get(id)
+            activate candidato
+
+                candidato --> candidatos: Candidato
+
+            deactivate candidato
+            candidatos --> candidatoController: Candidato
+
+        deactivate candidatos
+        candidatoController --> gui: Candidato
+
+    deactivate candidatoController
+
+deactivate gui
+
+
+
+@enduml
