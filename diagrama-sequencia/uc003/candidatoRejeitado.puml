@@ -1,0 +1,51 @@
+@startuml
+
+actor "Representante R+S" as representante
+boundary "GUI" as gui <<fronteira>>
+control "CandidatoController" as candidatoController <<controller>>
+control "AprovacaoController" as aprovacaoController<<controller>>
+collections "Candidatos" as candidatos
+entity "Candidato" as candidato
+
+representante -> gui: solicitaRejeicaoCandidato(id)
+activate gui
+    gui -> candidatoController: solicitaRejeicaoCandidato(id)
+    activate candidatoController
+        candidatoController -> candidatos: buscaCandidato(id)
+        activate candidatos
+            
+            candidatos -> candidato: get(id)
+            activate candidato
+                candidato --> candidatos: candidato
+            deactivate candidato
+
+        candidatos --> candidatoController: candidato
+        deactivate candidatos
+
+        candidatoController -> candidatoController: mudaSituacao(candidato)
+        candidatoController -> candidatos: salva(candidato)
+
+        activate voluntarios
+            voluntarios --> candidatoController: candidato
+        deactivate voluntarios
+
+    candidatoController --> gui: candidato
+    deactivate candidatoController
+deactivate gui
+
+representante -> gui: rejeitaCandidato(candidato, motivo)
+activate gui
+    gui -> aprovacaoController: rejeitaCandidato(candidato, motivo)
+    activate aprovacaoController
+        aprovacaoController -> aprovacaoController: atualizaMotivoSituacaoCandidato(candidato, motivo)
+        aprovacaoController -> candidatos: salva(candidato)
+        activate candidatos
+            candidatos --> aprovacaoController: candidato
+        deactivate candidatos
+        aprovacaoController -> aprovacaoController: enviaEmailRejeicao(candidatoEmail)
+        aprovacaoController --> gui: sucesso
+        deactivate aprovacaoController
+deactivate gui
+
+
+@enduml

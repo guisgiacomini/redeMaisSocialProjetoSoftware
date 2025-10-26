@@ -1,0 +1,36 @@
+```plantuml
+@startuml
+
+actor "Representante R+S" as representante
+boundary "GUI" as gui <<fronteira>>
+control "CandidatoController" as candidatoController <<controller>>
+control "AprovacaoController" as aprovacaoController<<controller>>
+collections "Candidatos" as candidatos
+collections "Voluntarios" as voluntarios
+entity "Candidato" as candidato
+entity "Voluntario" as voluntario
+
+representante -> gui: aprovaVoluntario(idVoluntario)
+activate gui
+    gui -> aprovacaoController: aprovaVoluntario(idVoluntario)
+    activate aprovacaoController
+        
+        aprovacaoController -> voluntarios: procuraVoluntario(idVoluntario)
+        activate voluntarios
+            voluntarios -> voluntario: get(idVoluntario)
+            activate voluntario
+                voluntario --> voluntarios: voluntario
+            deactivate voluntario
+            voluntarios --> aprovacaoController: voluntario
+        
+        aprovacaoController -> aprovacaoController: geraLoginSenhaVoluntario(voluntario)
+        aprovacaoController -> voluntarios: salvaVoluntario(voluntario)
+        
+        deactivate voluntarios
+
+        aprovacaoController -> aprovacaoController: enviaEmailLoginInstrucao(voluntarioEmail, voluntarioLogin, voluntarioSenha)
+        aprovacaoController -> aprovacaoController: enviaEmailResultadoAfiliacaoRecomendacao(voluntarioEmail)
+
+        aprovacaoController --> gui: "successo"
+
+@enduml

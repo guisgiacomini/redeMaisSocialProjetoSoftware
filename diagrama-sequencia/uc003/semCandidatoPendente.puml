@@ -1,0 +1,40 @@
+
+@startuml
+
+actor "Representante R+S" as representante
+boundary "GUI" as gui <<fronteira>>
+control "AfiliacaoController" as afiliacaoController <<controller>>
+control "CandidatoController" as candidatoController <<controller>>
+
+collections "PedidoAfiliacao" as pedidoAfiliacao
+collections "Candidatos" as candidatos
+entity "Candidato" as candidato
+
+
+
+representante -> gui: buscaCandidatosPendentes()
+activate gui
+
+    gui -> afiliacaoController: buscaCandidatosPendentes()
+    activate afiliacaoController
+
+        afiliacaoController -> pedidoAfiliacao: buscaCandidatosPendentes()
+        activate pedidoAfiliacao
+
+            pedidoAfiliacao -> candidato: getCandidato()
+            activate candidato
+                
+                candidato --> pedidoAfiliacao: null
+
+            deactivate candidato
+
+            pedidoAfiliacao --> afiliacaoController: null
+
+            deactivate pedidoAfiliacao
+
+        afiliacaoController --> gui: "Sem candidatos pendentes para aprovação"
+        deactivate afiliacaoController
+
+deactivate gui 
+
+@enduml
