@@ -1,18 +1,19 @@
 @startuml
 actor "Representante R+S" as representante
 boundary "GUI" as gui <<fronteira>>
-control "AfiliacaoController" as afiliacaoController <<controller>>
 control "CandidatoController" as candidatoController <<controller>>
 control "ONGController" as ongController<<controller>>
-control "AprovacaoController" as aprovacaoController<<controller>>
-collections "PedidoAfiliacao" as pedidoAfiliacao
+
 collections "Candidatos" as candidatos
-collections "Voluntarios" as voluntarios
 collections "ONGs" as ongs
 collections "Campanhas" as campanhas
-collections "Recomendacoes" as recomendacoes
+collections "Perfis" as perfis
+
+entity "Perfil" as perfil
+entity "ONG" as ong
 entity "Candidato" as candidato
-entity "Voluntario" as voluntario
+entity "Recomendacao" as recomendacao
+entity "Campanha" as campanha
 
 representante -> gui: solicitaAprovacaoCandidato(id)
 activate gui
@@ -29,34 +30,19 @@ activate gui
         candidatos --> candidatoController: candidato
         deactivate candidatos
 
-        candidatoController -> candidatoController: mudaSituacao(candidato)
-        candidatoController -> voluntarios: salva(voluntario)
+        candidatoController -> candidato: mudaSituacao(candidato)
+        activate candidato
+            candidato --> candidatoController: candidato
+        deactivate candidato
 
-        activate voluntarios
-            voluntarios --> candidatoController: voluntario
-        deactivate voluntarios
+        candidatoController -> candidatos: salva(candidato)
 
-    candidatoController --> gui: voluntario
+        activate candidatos
+            candidatos--> candidatoController: candidato
+        deactivate candidatos
+
+    candidatoController --> gui: candidato
     deactivate candidatoController
 deactivate gui
-
-representante -> gui: solicitaçãoRecomendacaoOngParceira(perfil)
-activate gui
-    gui -> ongController: solicitaçãoRecomendacaoOngParceira(perfil)
-    activate ongController
-        ongController -> ongs: filtroONGDeAcordoComPerfil(perfil)
-        activate ongs
-            ongs --> ongController: ongs
-        deactivate ongs
-        ongController -> campanhas: procuraCampanhasDeOng(ong)
-        activate campanhas
-            campanhas --> ongController: campanhas
-        deactivate campanhas
-
-        ongController -> ongController: criaRecomendacao(ong, campanha)
-        ongController --> gui: recomendação 
-    deactivate ongController
-deactivate gui
-
 
 @enduml

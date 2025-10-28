@@ -1,0 +1,62 @@
+
+@startuml
+actor "Representante R+S" as representante
+boundary "GUI" as gui <<fronteira>>
+control "CandidatoController" as candidatoController <<controller>>
+control "ONGController" as ongController<<controller>>
+
+collections "Candidatos" as candidatos
+collections "ONGs" as ongs
+collections "Campanhas" as campanhas
+collections "Perfis" as perfis
+
+entity "Perfil" as perfil
+entity "ONG" as ong
+entity "Candidato" as candidato
+entity "Recomendacao" as recomendacao
+entity "Campanha" as campanha
+
+
+representante -> gui: solicitaçãoRecomendacaoOngParceira(perfil)
+activate gui
+    gui -> ongController: solicitaçãoRecomendacaoOngParceira(perfil)
+    activate ongController
+        ongController -> ongs: filtroONGDeAcordoComPerfil(perfil)
+        activate ongs
+            ongs -> ong: retornaDeAcordoComPerfil(perfil)
+            
+            activate ong
+                ong -> perfis: procuraPerfil(perfil)
+                activate  perfis
+                    perfis -> perfil: getPerfil(perfil)
+                        activate perfil
+                            perfil --> perfis: perfil
+                        deactivate perfil
+                    perfis --> ong: perfil
+                deactivate perfis
+                ong --> ongs: ong
+            deactivate ong
+            ongs --> ongController: ongs
+
+        deactivate ongs
+
+
+        ongController -> recomendacao: criaRecomendacao(ongs)
+        activate recomendacao
+            group  enquanto hover ongs
+                recomendacao -> ong: associaOng(ong)
+                activate ong
+                deactivate ong
+                recomendacao -> campanhas: associaCampanhas(ong)
+                activate campanhas
+                    
+                deactivate campanhas
+            end
+            recomendacao --> ongController: recomendacao
+        deactivate recomendacao
+        ongController --> gui: recomendação 
+    deactivate ongController
+deactivate gui
+
+
+@enduml

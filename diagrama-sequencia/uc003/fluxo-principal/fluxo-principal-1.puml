@@ -4,16 +4,12 @@ actor "Representante R+S" as representante
 boundary "GUI" as gui <<fronteira>>
 control "AfiliacaoController" as afiliacaoController <<controller>>
 control "CandidatoController" as candidatoController <<controller>>
-control "ONGController" as ongController<<controller>>
-control "AprovacaoController" as aprovacaoController<<controller>>
+
 collections "PedidoAfiliacao" as pedidoAfiliacao
 collections "Candidatos" as candidatos
 collections "Voluntarios" as voluntarios
-collections "ONGs" as ongs
-collections "Campanhas" as campanhas
-collections "Recomendacoes" as recomendacoes
+
 entity "Candidato" as candidato
-entity "Voluntario" as voluntario
 
 
 representante -> gui: buscaCandidatosPendentes()
@@ -24,14 +20,14 @@ activate gui
 
         afiliacaoController -> pedidoAfiliacao: buscaCandidatosPendentes()
         activate pedidoAfiliacao
+            group enquanto houver candidatos pendentes
+                pedidoAfiliacao -> candidato: getCandidato()
+                activate candidato
+                    
+                    candidato --> pedidoAfiliacao: Candidato
 
-            pedidoAfiliacao -> candidato: getCandidato()
-            activate candidato
-                
-                candidato --> pedidoAfiliacao: Candidato
-
-            deactivate candidato
-
+                deactivate candidato
+            end
             pedidoAfiliacao --> afiliacaoController: Candidatos
 
             deactivate pedidoAfiliacao
