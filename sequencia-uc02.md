@@ -1,120 +1,33 @@
 ```plantuml
 @startuml
-actor "Candidato" as candidato
-boundary "GUI" as gui <<fronteira>>
-participant "afiliacaoController" as controller <<controle>>
-entity "Voluntario" as voluntario <<entidade>>
-entity "TermoCompromisso" as termo <<entidade>>    
-entity "Afiliacao" as afiliacao <<entidade>>
+actor "Ator" as ator
+participant "GUI" as gui <<fronteira>>
+participant ":__afiliacaoController__" as controller <<controle>>
+participant ":__Candidato__" as entityCandidato <<entidade>>
+collections "Candidato" as candidato 
+participant ":__PedidoAfiliacao__" as afiliacao <<entidade>>
 
-== Solicitação Inicial ==
-candidato -> gui: informaEmailECPF(email, cpf)
+
+
+
+ator -> gui: solicitaAfiliacao
 activate gui
 gui -> controller: solicitaAfiliacao(email, cpf)
 activate controller
-controller -> voluntario: buscarPorEmailOuCPF(email, cpf)
-activate voluntario
-voluntario --> controller: naoEncontrado
-deactivate voluntario
+controller -> candidato : buscarPorEmailOuCPF(email, cpf)
+activate candidato
+candidato --> controller: naoEncontrado
+deactivate candidato
 
-== Identificação do Candidato ==
-controller --> gui: exibeFormularioIdentificacao()
-deactivate controller
+controller --> afiliacao ** : <<create>>
+deactivate controller 
 deactivate gui
 
-candidato -> gui: enviaFormularioIdentificacao(nome, sexo, data_nascimento, nacionalidade, endereco_residencial, endereco_comercial, profissao)
+ator -> gui: validaDadosIdentificacao
 activate gui
-gui -> controller: validaDadosIdentificacao(dadosIdentificacao)
+gui -> controller: validaDadosIdentificacao(nome, sexo, data_nascimento, nacionalidade, endereco, profissao) 
 activate controller
 
-controller -> controller: validaDados()
 
-controller -> afiliacao: create(email, cpf)
-activate afiliacao
-afiliacao --> controller: afiliacaoId
-
-controller -> afiliacao: armazenaDadosIdentificacao(dadosIdentificacao)
-afiliacao --> controller: dadosArmazenados
-deactivate afiliacao
-
-== Perfil, Habilidades e Interesses ==
-controller --> gui: exibeFormularioPerfil()
-deactivate controller
-deactivate gui
-
-candidato -> gui: enviaFormularioPerfil(perfil, habilidades, interesses)
-activate gui
-gui -> controller: validaDadosPerfil(dadosPerfil)
-activate controller
-
-controller -> controller: validaDados()
-
-controller -> afiliacao: armazenaDadosPerfil(dadosPerfil)
-activate afiliacao
-afiliacao --> controller: dadosArmazenados
-deactivate afiliacao
-
-== Termo de Compromisso ==
-controller -> termo: obterTermo()
-activate termo
-termo --> controller: conteudoTermo
-deactivate termo
-
-controller --> gui: exibeTermo(conteudoTermo)
-deactivate controller
-deactivate gui
-
-candidato -> gui: aceitaTermo()
-activate gui
-gui -> controller: processaAceite(true)
-activate controller
-
-controller -> afiliacao: armazenaAceite(true)
-activate afiliacao
-controller -> afiliacao: atualizaSituacao("Aguardando Validação")
-afiliacao --> controller: situacaoAtualizada
-deactivate afiliacao
-
-== Validação de Email ==
-controller -> controller: geraLinkValidacao()
-controller -> afiliacao: armazenaTokenValidacao(token, dataExpiracao)
-activate afiliacao
-afiliacao --> controller: tokenArmazenado
-deactivate afiliacao
-
-controller -> gui: enviarEmailValidacao(email, linkValidacao)
-gui -> gui: enviaEmail()
-gui --> controller: emailEnviado
-
-controller --> gui: exibeMensagemValidacao()
-deactivate controller
-deactivate gui
-
-... Candidato acessa email ...
-
-candidato -> gui: clicaLinkValidacao(token)
-activate gui
-gui -> controller: validaEmail(token)
-activate controller
-
-controller -> afiliacao: buscarPorToken(token)
-activate afiliacao
-afiliacao --> controller: dadosAfiliacao
-deactivate afiliacao
-
-controller -> afiliacao: atualizaSituacao("Aguardando Aprovação")
-activate afiliacao
-controller -> afiliacao: marcarEmailValidado()
-afiliacao --> controller: situacaoAtualizada
-deactivate afiliacao
-
-controller -> voluntario: create(dadosAfiliacao)
-activate voluntario
-voluntario --> controller: voluntarioId
-deactivate voluntario
-
-controller --> gui: exibeMensagemAguardandoAprovacao()
-deactivate controller
-deactivate gui
 
 @enduml
