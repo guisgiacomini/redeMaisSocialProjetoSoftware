@@ -1,33 +1,75 @@
 ```plantuml
 @startuml
-actor "Ator" as ator
+actor "Cliente" as ator
 participant "GUI" as gui <<fronteira>>
-participant ":__afiliacaoController__" as controller <<controle>>
-participant ":__Candidato__" as entityCandidato <<entidade>>
-collections "Candidato" as candidato 
-participant ":__PedidoAfiliacao__" as afiliacao <<entidade>>
+participant ":AfiliacaoController" as controller <<controle>>
+participant ":Candidato" as candidato <<entidade>>
+participant ":PedidoAfiliacao" as afiliacao <<entidade>>
+participant ":EmailValidador" as emailValidador <<entidade>>
+collections "Candidato" as collectionCandidato
 
 
-
-
-ator -> gui: solicitaAfiliacao
+ator -> gui: solicitaAfiliacao(email, cpf)
 activate gui
 gui -> controller: solicitaAfiliacao(email, cpf)
 activate controller
-controller -> candidato : buscarPorEmailOuCPF(email, cpf)
-activate candidato
-candidato --> controller: naoEncontrado
-deactivate candidato
 
-controller --> afiliacao ** : <<create>>
-deactivate controller 
+controller -> collectionCandidato: buscarPorEmailOuCPF(email, cpf)
+activate collectionCandidato
+collectionCandidato --> controller: naoEncontrado
+destroy collectionCandidato
+
+controller -> afiliacao **: criarPedidoAfiliacao()
+activate afiliacao
+afiliacao --> controller: pedidoCriado
+deactivate afiliacao
+
+controller --> gui: exibirFormularioIdentificacao()
+deactivate controller
 deactivate gui
 
-ator -> gui: validaDadosIdentificacao
+' --- Preenchimento e validação dos dados ---
+ator -> gui: informaDadosIdentificacao(nome, sexo, data_nascimento, nacionalidade, endereco, profissao)
 activate gui
-gui -> controller: validaDadosIdentificacao(nome, sexo, data_nascimento, nacionalidade, endereco, profissao) 
+gui -> controller: validarDadosIdentificacao(dados)
 activate controller
 
+controller -> candidato **: criarCandidato(dados)
+activate candidato
+candidato --> controller: candidatoCriado
+deactivate candidato
 
+controller -> afiliacao: associarCandidato(candidato)
+afiliacao --> controller: associado
+
+controller -> gui: exibirFormularioPerfilHabilidades()
+deactivate controller
+deactivate gui
+
+' --- Preenchimento do perfil ---
+ator -> gui: informaPerfilEInteresses(perfil, habilidades)
+activate gui
+gui -> controller: validarPerfil(perfil, habilidades)
+activate controller
+
+controller -> candidato: armazenarPerfil(perfil, habilidades)
+activate candidato
+candidato --> controller: perfilArmazenado
+deactivate candidato
+
+controller -> gui: exibirTermoCompromisso()
+deactivate controller
+deactivate gui
+
+' --- Aceite do termo ---
+ator -> gui: aceitaTermo()
+activate gui
+gui -> controller: registrarAceite()
+activate controller
+
+controller -> candidato: atualizarSituacao("Aguardando Validação")
+controller -> emailValidador **: enviarLinkValidacao(email)
+deactivate controller
+deactivate gui
 
 @enduml
