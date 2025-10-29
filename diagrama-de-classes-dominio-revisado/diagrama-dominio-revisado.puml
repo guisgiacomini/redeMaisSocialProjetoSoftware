@@ -72,7 +72,7 @@ class CertidaoCNPJ {
     -tipo
 }
 
-class TermoDeCompromisso {
+class "TermoDeCompromisso" as Termo{
 }
 
 class CondicaoTermo{
