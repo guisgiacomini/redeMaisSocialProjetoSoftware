@@ -23,7 +23,7 @@ class ONG {
     -nome
 }
 
-class Voluntario extends Papel{
+class Voluntario extends Papel, Candidato {
 
 }
 
@@ -32,10 +32,6 @@ class Campanha {
     -descricao
 }
 
-class Afiliacao {
-    -dataDeAfiliacao
-    -status
-}
 
 class Perfil {
 
@@ -53,8 +49,21 @@ class Representante {
     
 }
 
-class Email {
+class Email extends Localizacao{
+    -enderecoEmail
+}
+
+class Localizacao {
+
+}
+
+class Geografica extends Localizacao{
+    -pais
+    -estado
+    -cidade
     -endereco
+    -complemento
+    -numero
 }
 
 class Recomendacao {
@@ -100,28 +109,28 @@ Entidade "1" -- "1" Pessoa: é
 
 Fisica <-- "1" Juridica: representado
 
-Candidato "1" -- "1" Afiliacao: solicita
+Candidato "1" -- "1" PedidoAfiliacao: solicita
 Candidato "1" -- "0..*" CertidaoCNPJ: anexa
 Candidato "1..*" -- "1..*" Perfil
 Candidato -- "1" PedidoAfiliacao: Solicita
-Candidato "1" --> "1" Voluntario: Pode se tornar
+
 
 Entidade "1" -- "1" Perfil: possui
-Entidade "1" *-- "1" Email: possui
+Entidade "1" *-- "1..*" Localizacao: possui
 
 ONG "1" *-- "0..*" Campanha: abre
 Campanha "1..*" -- "1..*" Perfil: contém
 
-Representante "1" -- "1..*" Afiliacao: avalia
+Representante "1" -- "1..*" PedidoAfiliacao: avalia
 Representante "1" -- "1..*" Aprovacao: solicita
 Representante "1" -- "1..*" Perfil: especifica
 Representante "1" -- "1..*" Recomendacao: solicita
 
 Recomendacao "0..*" -- "0..*" ONG: apresenta
 
-Afiliacao "1" -- "1" Aprovacao : "passa por"
+PedidoAfiliacao "1" -- "1" Aprovacao : "passa por"
 
-Voluntario "1" -- "1" Afiliacao: "possui"
+Voluntario "1" -- "1" PedidoAfiliacao: "possui"
 
 
 PedidoAfiliacao -- "0..1" Termo: contém
