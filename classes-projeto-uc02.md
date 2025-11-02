@@ -47,7 +47,7 @@ class CandidatoCollection <<entidade>> {
 }
 
 
-GUI "1" --> "1" AfiliacaoController : aciona
+GUI "1" -- "1" AfiliacaoController : aciona
 AfiliacaoController "1" -- "1" CandidatoCollection : consulta
 AfiliacaoController "1" -- "1" PedidoAfiliacao : cria/associa
 AfiliacaoController "1" --"1" Candidato : cria/atualiza
