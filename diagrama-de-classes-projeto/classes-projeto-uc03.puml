@@ -1,0 +1,98 @@
+@startuml
+
+title Diagrama de classes de projeto - UC003
+
+' Primeira Etapa
+
+class AfiliacaoController {
+    +solicitaAfiliacao(email, cpf)
+    +validarDadosIdentificacao(dados)
+    +validarPerfil(perfil, habilidades)
+    +registrarAceite()
+    +buscaCandidatosPendentes()
+}
+
+class PedidoAfiliacao {
+    -status
+    -data
+    +criarPedidoAfiliacao()
+    +associarCandidato(candidato)
+    +buscaCandidatoPendentes()
+
+}
+
+class Candidato {
+    -nome
+    -sexo
+    -dataNascimento
+    -nacionalidade
+    -profissao
+    -situacao
+    +getCandidato()
+    +get(id)
+    +mudaSituacao(candidato)
+    +salva(candidato)
+}
+
+AfiliacaoController "1" -- "1..*" PedidoAfiliacao: possui
+PedidoAfiliacao "1" -- "1" Candidato: procura
+
+class CandidatoController {
+    +exibeInformacaoDetalhadaCandidato(id)
+    +solicitaAprovacaoCandidato(id)
+}
+
+CandidatoController "1" -- "0..*" Candidato: possui
+
+class ONGController {
+    +solicitacaoRecomendacaoOngParceira(perfil)
+}
+
+class ONG {
+    +filtroONGDeAcordoComPerfil(perfil);
+    +associaOng(ong)
+}
+
+class Perfil {
+    +procuraPerfil(perfil)
+}
+
+
+ONGController "1" -- "0..*" ONG: possui
+ONG "0..*" -- "1..*" Perfil: possui
+
+class Recomendacao {
+    +criaRecomendacao(ongs)
+    +salvaRecomendacao(recomendacao)
+}
+
+class Campanha {
+    +associaCampanhas(ong)
+}
+
+
+ONGController "1" -- "1" Recomendacao: cria
+Recomendacao "0..*" -- "0..*" ONG: possui
+Recomendacao "0..*" -- "0..*" Campanha: possui
+
+class AprovacaoController {
+    +aprovaVoluntario(idVoluntario, recomendacao)
+    +enviaEmailLoginInstrucao(voluntarioEmail, voluntarioLogin, voluntarioSenha)
+    +enviaEmailResultadoAfiliacaoRecomendacao(voluntarioEmail,recomendacao)
+    +geraLoginSenhaVoluntario(voluntario)
+    +rejeitaCandidato(candidato, motivo)
+    +atualizaMotivoSituacaoCandidato(candidato,motivo)
+    +enviaEmailRejeicao(candidatoEmail)
+    +enviaEmailResultadoAfiliacaoRecomendacao(voluntarioEmail, recomendacao)
+}
+
+class Voluntario {
+    -login
+    -senha
+    +get(idVoluntario)
+    +salvaVoluntario(voluntario)
+}
+
+AprovacaoController "1" -- "1..*" Voluntario: possui
+
+@enduml
