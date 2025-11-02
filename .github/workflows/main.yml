@@ -22,6 +22,6 @@ jobs:
         uses: grassedge/generate-plantuml-action@v1.5
         with:
           path: .   
-          message: "Atualizando diagramas UML"
+          message: "Criando .svg do UML"
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
