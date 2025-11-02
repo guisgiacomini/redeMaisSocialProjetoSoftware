@@ -32,8 +32,12 @@ CREATE TABLE Papel (
 
 CREATE TABLE Email (
     id_email SERIAL PRIMARY KEY,
-    enderecoEmail VARCHAR(120) UNIQUE NOT NULL
+    enderecoEmail VARCHAR(120) UNIQUE NOT NULL,
+    id_localizacao INT,
+    CONSTRAINT fk_email_localizacao FOREIGN KEY (id_localizacao)
+        REFERENCES Localizacao(id_localizacao) ON DELETE CASCADE
 );
+
 
 -- ======= LOCALIZAÇÃO ========
 
@@ -53,10 +57,6 @@ CREATE TABLE Geografica (
         REFERENCES Localizacao(id_localizacao) ON DELETE CASCADE
 );
 
-ALTER TABLE Email
-    ADD COLUMN id_localizacao INT,
-    ADD CONSTRAINT fk_email_localizacao FOREIGN KEY (id_localizacao)
-        REFERENCES Localizacao(id_localizacao) ON DELETE CASCADE;
 
 -- ======= PERFIL / HABILIDADE / INTERESSE ========
 
