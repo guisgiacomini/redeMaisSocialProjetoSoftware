@@ -1,12 +1,18 @@
 ```plantuml
 @startuml
-actor "Cliente" as ator
+actor "Candidato" as ator
 participant "GUI" as gui <<fronteira>>
 participant ":AfiliacaoController" as controller <<controle>>
 participant ":Candidato" as candidato <<entidade>>
 participant ":PedidoAfiliacao" as afiliacao <<entidade>>
 participant ":EmailValidador" as emailValidador <<entidade>>
-collections "Candidato" as collectionCandidato
+participant "Perfil" as perfil <<entidade>>
+participant "Habilidade" as habilidade <<entidade>>
+participant "Interesse" as interesse <<entidade>>
+participant "TermoDeCompromisso" as termo <<entidade>>
+participant "Afilicacao" as afiliacaoent <<entidade>>
+
+collections "Candidatos" as collectionCandidato <<Collection>>
 
 
 ator -> gui: solicitaAfiliacao(email, cpf)
@@ -17,12 +23,26 @@ activate controller
 controller -> collectionCandidato: buscarPorEmailOuCPF(email, cpf)
 activate collectionCandidato
 collectionCandidato --> controller: naoEncontrado
-destroy collectionCandidato
+deactivate collectionCandidato
 
 controller -> afiliacao **: criarPedidoAfiliacao()
 activate afiliacao
-afiliacao --> controller: pedidoCriado
+afiliacao -> afiliacaoent **: criarAfiliacao()
+activate afiliacaoent
+afiliacaoent --> afiliacao: afiliacao
+deactivate afiliacaoent
+afiliacao --> controller: pedido
 deactivate afiliacao
+controller --> candidato **: <<create>>
+
+controller -> afiliacao: associarCandidato(candidato)
+activate afiliacao
+afiliacao --> controller: candidatoAssociado
+deactivate afiliacao
+
+' activate candidato
+' candidato --> controller: candidatoCriado
+' deactivate candidato
 
 controller --> gui: exibirFormularioIdentificacao()
 deactivate controller
@@ -34,13 +54,6 @@ activate gui
 gui -> controller: validarDadosIdentificacao(dados)
 activate controller
 
-controller -> candidato **: criarCandidato(dados)
-activate candidato
-candidato --> controller: candidatoCriado
-deactivate candidato
-
-controller -> afiliacao: associarCandidato(candidato)
-afiliacao --> controller: associado
 
 controller -> gui: exibirFormularioPerfilHabilidades()
 deactivate controller
