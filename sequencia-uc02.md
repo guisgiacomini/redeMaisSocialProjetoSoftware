@@ -6,11 +6,11 @@ participant ":AfiliacaoController" as controller <<controle>>
 participant ":Candidato" as candidato <<entidade>>
 participant ":PedidoAfiliacao" as afiliacao <<entidade>>
 participant ":EmailValidador" as emailValidador <<entidade>>
-participant "Perfil" as perfil <<entidade>>
-participant "Habilidade" as habilidade <<entidade>>
-participant "Interesse" as interesse <<entidade>>
-participant "TermoDeCompromisso" as termo <<entidade>>
-participant "Afilicacao" as afiliacaoent <<entidade>>
+participant ":Perfil" as perfil <<entidade>>
+participant ":Habilidade" as habilidade <<entidade>>
+participant ":Interesse" as interesse <<entidade>>
+participant ":TermoDeCompromisso" as termo <<entidade>>
+participant ":Afilicacao" as afiliacaoent <<entidade>>
 
 collections "Candidatos" as collectionCandidato <<Collection>>
 
@@ -33,7 +33,10 @@ afiliacaoent --> afiliacao: afiliacao
 deactivate afiliacaoent
 afiliacao --> controller: pedido
 deactivate afiliacao
-controller --> candidato **: <<create>>
+controller -> candidato : atualizaDados(email, cpf)
+activate candidato
+candidato --> controller : candidato
+deactivate candidato
 
 controller -> afiliacao: associarCandidato(candidato)
 activate afiliacao
@@ -54,19 +57,29 @@ activate gui
 gui -> controller: validarDadosIdentificacao(dados)
 activate controller
 
+controller -> candidato: atualizaDados(nome, sexo, data_nascimento, nacionalidade, endereco, profissao)
+activate candidato
+candidato --> controller: candidato
+deactivate candidato
+
 
 controller -> gui: exibirFormularioPerfilHabilidades()
 deactivate controller
 deactivate gui
 
 ' --- Preenchimento do perfil ---
-ator -> gui: informaPerfilEInteresses(perfil, habilidades)
+ator -> gui: informaPerfilEInteresses(perfil, habilidades, interesses)
 activate gui
-gui -> controller: validarPerfil(perfil, habilidades)
+gui -> controller: validarPerfil(perfil, habilidades, interesses)
 activate controller
 
-controller -> candidato: armazenarPerfil(perfil, habilidades)
+controller -> candidato: armazenarPerfil(perfil, habilidades, interesses)
 activate candidato
+candidato --> perfil ** : <<create>>
+candidato --> habilidade **: <<create>>
+candidato --> interesse **: <<create>>
+
+
 candidato --> controller: perfilArmazenado
 deactivate candidato
 
@@ -79,6 +92,8 @@ ator -> gui: aceitaTermo()
 activate gui
 gui -> controller: registrarAceite()
 activate controller
+controller -> termo: aceita()
+termo --> controller: aceito
 
 controller -> candidato: atualizarSituacao("Aguardando Validação")
 controller -> emailValidador **: enviarLinkValidacao(email)
