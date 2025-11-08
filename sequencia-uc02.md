@@ -4,17 +4,16 @@ actor "Candidato" as ator
 participant "GUI" as gui <<fronteira>>
 participant ":AfiliacaoController" as controller <<controle>>
 participant ":Candidato" as candidato <<entidade>>
-participant ":PedidoAfiliacao" as afiliacao <<entidade>>
+participant ":PedidoAfiliacao" as pedido <<entidade>>
 participant ":EmailValidador" as emailValidador <<entidade>>
 participant ":Perfil" as perfil <<entidade>>
 participant ":Habilidade" as habilidade <<entidade>>
 participant ":Interesse" as interesse <<entidade>>
 participant ":TermoDeCompromisso" as termo <<entidade>>
-participant ":Afilicacao" as afiliacaoent <<entidade>>
 
-collections "Candidatos" as collectionCandidato <<Collection>>
+collections "Candidatos" as collectionCandidato <<coleção>>
 
-
+' --- Solicitação de afiliação ---
 ator -> gui: solicitaAfiliacao(email, cpf)
 activate gui
 gui -> controller: solicitaAfiliacao(email, cpf)
@@ -25,27 +24,20 @@ activate collectionCandidato
 collectionCandidato --> controller: naoEncontrado
 deactivate collectionCandidato
 
-controller -> afiliacao **: criarPedidoAfiliacao()
-activate afiliacao
-afiliacao -> afiliacaoent **: criarAfiliacao()
-activate afiliacaoent
-afiliacaoent --> afiliacao: afiliacao
-deactivate afiliacaoent
-afiliacao --> controller: pedido
-deactivate afiliacao
-controller -> candidato : atualizaDados(email, cpf)
+controller -> pedido **: criarPedidoAfiliacao()
+activate pedido
+pedido --> controller: pedidoCriado
+deactivate pedido
+
+controller -> candidato: atualizaDados(email, cpf)
 activate candidato
-candidato --> controller : candidato
+candidato --> controller: candidato
 deactivate candidato
 
-controller -> afiliacao: associarCandidato(candidato)
-activate afiliacao
-afiliacao --> controller: candidatoAssociado
-deactivate afiliacao
-
-' activate candidato
-' candidato --> controller: candidatoCriado
-' deactivate candidato
+controller -> pedido: associarCandidato(candidato)
+activate pedido
+pedido --> controller: candidatoAssociado
+deactivate pedido
 
 controller --> gui: exibirFormularioIdentificacao()
 deactivate controller
@@ -57,13 +49,12 @@ activate gui
 gui -> controller: validarDadosIdentificacao(dados)
 activate controller
 
-controller -> candidato: atualizaDados(nome, sexo, data_nascimento, nacionalidade, endereco, profissao)
+controller -> candidato: atualizaDados(dados)
 activate candidato
-candidato --> controller: candidato
+candidato --> controller: dadosValidados
 deactivate candidato
 
-
-controller -> gui: exibirFormularioPerfilHabilidades()
+controller --> gui: exibirFormularioPerfilHabilidades()
 deactivate controller
 deactivate gui
 
@@ -76,14 +67,12 @@ activate controller
 controller -> candidato: armazenarPerfil(perfil, habilidades, interesses)
 activate candidato
 candidato --> perfil ** : <<create>>
-candidato --> habilidade **: <<create>>
-candidato --> interesse **: <<create>>
-
-
+candidato --> habilidade ** : <<create>>
+candidato --> interesse ** : <<create>>
 candidato --> controller: perfilArmazenado
 deactivate candidato
 
-controller -> gui: exibirTermoCompromisso()
+controller --> gui: exibirTermoCompromisso()
 deactivate controller
 deactivate gui
 
@@ -92,8 +81,9 @@ ator -> gui: aceitaTermo()
 activate gui
 gui -> controller: registrarAceite()
 activate controller
+
 controller -> termo: aceita()
-termo --> controller: aceito
+termo --> controller: termoAceito
 
 controller -> candidato: atualizarSituacao("Aguardando Validação")
 controller -> emailValidador **: enviarLinkValidacao(email)
