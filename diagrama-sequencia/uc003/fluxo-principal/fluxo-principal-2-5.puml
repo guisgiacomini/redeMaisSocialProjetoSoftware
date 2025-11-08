@@ -1,4 +1,3 @@
-
 @startuml
 actor "Representante R+S" as representante
 boundary "GUI" as gui <<fronteira>>
@@ -41,18 +40,24 @@ activate gui
         deactivate ongs
 
 
-        ongController -> recomendacao: criaRecomendacao(ongs)
+        ongController -> recomendacao: create
         activate recomendacao
-            group  enquanto hover ongs
-                recomendacao -> ong: associaOng(ong)
+                recomendacao --> ongController: recomendacao
+                ongController -> recomendacao: associaOngs(ongs)
+                ongController -> recomendacao: associaCampanha(ongs)
+                recomendacao -> ong: getCampanhas()
                 activate ong
-                deactivate ong
-                recomendacao -> campanhas: associaCampanhas(ong)
+                ong -> campanhas: getCampanha()
                 activate campanhas
-                    
+                campanhas -> campanha: get()
+                activate campanha
+                    campanha --> campanhas: campanha
+                deactivate campanha
+                campanhas --> ong: camapanhas
                 deactivate campanhas
-            end
-            recomendacao --> ongController: recomendacao
+                ong --> recomendacao: campanhas
+                deactivate ong
+            
         deactivate recomendacao
         ongController --> gui: recomendação 
     deactivate ongController
