@@ -22,7 +22,13 @@ activate gui
             deactivate voluntario
             voluntarios --> aprovacaoController: voluntario
         
-        aprovacaoController -> aprovacaoController: geraLoginSenhaVoluntario(voluntario)
+        
+        aprovacaoController -> voluntario: geraLoginSenhaVoluntario(voluntario)
+        activate voluntario
+        deactivate voluntario
+        
+        
+        
         aprovacaoController -> voluntarios: salvaVoluntario(voluntario)
         
         deactivate voluntarios
@@ -30,6 +36,6 @@ activate gui
         aprovacaoController -> aprovacaoController: enviaEmailLoginInstrucao(voluntarioEmail, voluntarioLogin, voluntarioSenha)
         aprovacaoController -> aprovacaoController: enviaEmailResultadoAfiliacaoRecomendacao(voluntarioEmail)
 
-        aprovacaoController --> gui: "successo"
+        aprovacaoController --> gui: "E-mails foram enviados sem recomendação de ongs"
 
 @enduml
