@@ -9,11 +9,21 @@ collections "ONGs" as ongs
 collections "Campanhas" as campanhas
 collections "Perfis" as perfis
 
-entity "Perfil" as perfil
-entity "ONG" as ong
+
+
 entity "Candidato" as candidato
-entity "Recomendacao" as recomendacao
-entity "Campanha" as campanha
+entity "Perfil" as perfil
+
+
+collections "Habilidades" as habilidades
+entity "Habilidade" as habilidade
+
+collections "Interesses" as interesses
+entity "Interesse" as interesse
+
+
+collections "Voluntários" as voluntarios
+entity "Voluntário" as voluntario
 
 representante -> gui: solicitaAprovacaoCandidato(id)
 activate gui
@@ -33,15 +43,75 @@ activate gui
         candidatoController -> candidato: mudaSituacao(candidato)
         activate candidato
             candidato --> candidatoController: candidato
+            candidatoController -> candidato: getPerfilCandidato()
+            candidato -> perfil: getPerfil()
+            activate perfil
+                perfil --> candidato: perfil
+            deactivate perfil
+            candidato --> candidatoController: perfilCandidato
         deactivate candidato
 
         candidatoController -> candidatos: salva(candidato)
+        candidatoController -> voluntario: create
+        activate voluntario
+        
+        candidatoController -> voluntario: setPerfil(perfilCandidato)
+        voluntario --> candidatoController: voluntario
+        deactivate voluntario
+        
+        candidatoController -> voluntarios: salva(voluntario)
+        activate voluntarios
+            voluntarios --> candidatoController: voluntarioSalvo
+        deactivate voluntarios
 
-        activate candidatos
-            candidatos--> candidatoController: candidato
-        deactivate candidatos
+        
 
-    candidatoController --> gui: candidato
+
+        
+
+
+
+
+
+
+        gui --> candidatoController: exibeHabilidadePerfilInteressesVoluntario
+        candidatoController -> voluntario: getPerfilVoluntario()
+        activate voluntario
+
+            voluntario -> perfil: getPerfil()
+            activate perfil
+            perfil --> voluntario: perfil
+        voluntario --> candidatoController: perfil
+        candidatoController -> voluntario: getHabilidadesVoluntario() 
+            voluntario -> perfil: getHabilidades()
+
+                perfil -> habilidades: getHabilidades()
+                activate habilidades
+                    habilidades -> habilidade: getHabilidade()
+                    activate habilidade
+                        habilidade --> habilidades: habilidade
+                    deactivate habilidade
+                    habilidades -> perfil: habilidadesPerfil
+                deactivate habilidades
+                perfil --> voluntario: habilidadesPerfil
+            voluntario --> candidatoController: habilidadesVoluntario
+        candidatoController -> voluntario: getInteressesVoluntario()
+            voluntario -> perfil: getInteresses()
+            perfil -> interesses: getInteresses()
+                activate interesses
+                    interesses -> interesse: getInteresse()
+                    activate interesse
+                        interesse --> interesses: interesse
+                    deactivate interesse
+                    interesses -> perfil: interessesPerfil
+                deactivate interesses
+            perfil --> voluntario: interessesPerfil
+            deactivate perfil
+            voluntario --> candidatoController: interesseVoluntario
+            deactivate voluntario
+        
+
+    candidatoController --> gui: perfilHabilidadesInteressesVoluntario
     deactivate candidatoController
 deactivate gui
 

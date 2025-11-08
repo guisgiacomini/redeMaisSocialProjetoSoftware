@@ -9,7 +9,16 @@ collections "PedidoAfiliacao" as pedidoAfiliacao
 collections "Candidatos" as candidatos
 collections "Voluntarios" as voluntarios
 
+
+
 entity "Candidato" as candidato
+entity "Perfil" as perfil
+
+collections "Habilidades" as habilidades
+entity "Habilidade" as habilidade
+
+collections "Interesses" as interesses
+entity "Interesse" as interesse
 
 
 representante -> gui: buscaCandidatosPendentes()
@@ -20,20 +29,22 @@ activate gui
 
         afiliacaoController -> pedidoAfiliacao: buscaCandidatosPendentes()
         activate pedidoAfiliacao
-            group enquanto houver candidatos pendentes
-                pedidoAfiliacao -> candidato: getCandidato()
+            
+            pedidoAfiliacao --> candidatos: buscaCandidatos("pendente")
+            activate candidatos
+                candidatos --> candidato: getCandidato("pendente")
                 activate candidato
-                    
-                    candidato --> pedidoAfiliacao: Candidato
-
+                    candidato ---> candidatos: candidatoPendente
                 deactivate candidato
-            end
-            pedidoAfiliacao --> afiliacaoController: Candidatos
+                candidatos ---> pedidoAfiliacao: listaCandidatosPendentes
+            deactivate candidatos
+            pedidoAfiliacao --> afiliacaoController: listaCandidatosPendentes
+            
 
-            deactivate pedidoAfiliacao
+        deactivate pedidoAfiliacao
 
-        afiliacaoController --> gui: Candidatos
-        deactivate afiliacaoController
+        afiliacaoController --> gui: listaCandidatosPendentes
+    deactivate afiliacaoController
 
 deactivate gui 
 
@@ -56,7 +67,38 @@ activate gui
             candidatos --> candidatoController: Candidato
 
         deactivate candidatos
-        candidatoController --> gui: Candidato
+        candidatoController -> candidato: getPerfilCandidato()
+        activate candidato
+            perfil --> candidato: perfil
+            activate perfil
+        candidato --> candidatoController: perfil
+        candidatoController -> candidato: getHabilidadesCandidato() 
+            candidato -> perfil: getHabilidades()
+
+                perfil -> habilidades: getHabilidades()
+                activate habilidades
+                    habilidades -> habilidade: getHabilidade()
+                    activate habilidade
+                        habilidade --> habilidades: habilidade
+                    deactivate habilidade
+                    habilidades -> perfil: habilidadesPerfil
+                deactivate habilidades
+                perfil --> candidato: habilidadesPerfil
+            candidato --> candidatoController: habilidadesCandidato
+        candidatoController -> candidato: getInteressesCandidato()
+            candidato -> perfil: getInteresses()
+            perfil -> interesses: getInteresses()
+                activate interesses
+                    interesses -> interesse: getInteresse()
+                    activate interesse
+                        interesse --> interesses: interesse
+                    deactivate interesse
+                    interesses -> perfil: interessesPerfil
+                deactivate interesses
+            perfil --> candidato: interessesPerfil
+            deactivate perfil
+            candidato --> candidatoController: interesseCandidato
+        candidatoController --> gui: informacoesDetalhadas
 
     deactivate candidatoController
 
