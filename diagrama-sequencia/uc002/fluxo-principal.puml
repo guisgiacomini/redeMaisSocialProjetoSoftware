@@ -1,4 +1,4 @@
-```plantuml
+
 @startuml
 actor "Candidato" as ator
 participant "GUI" as gui <<fronteira>>
