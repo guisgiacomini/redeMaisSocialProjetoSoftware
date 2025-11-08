@@ -31,14 +31,20 @@ class Candidato {
     +getCandidato()
     +get(id)
     +mudaSituacao(candidato)
+    +getCandidato("pendente")
     +salva(candidato)
+    +getPerfilCandidato()
+    +getHabilidadesCandidato()
+    +getInteressesCandidato()
 }
+
 
 AfiliacaoController "1" -- "1..*" PedidoAfiliacao: possui
 PedidoAfiliacao "1" -- "1" Candidato: procura
 
 class CandidatoController {
     +exibeInformacaoDetalhadaCandidato(id)
+    +exibeHabilidadesPerfilInteressesVoluntario(id)
     +solicitaAprovacaoCandidato(id)
 }
 
@@ -50,10 +56,14 @@ class ONGController {
 
 class ONG {
     +filtroONGDeAcordoComPerfil(perfil);
-    +associaOng(ong)
+    +getCampanhas()
 }
 
 class Perfil {
+    -habilidades
+    -interesses
+    +getHabilidades()
+    +getInteresses()
     +procuraPerfil(perfil)
 }
 
@@ -62,12 +72,15 @@ ONGController "1" -- "0..*" ONG: possui
 ONG "0..*" -- "1..*" Perfil: possui
 
 class Recomendacao {
+    -campanhas
     +criaRecomendacao(ongs)
     +salvaRecomendacao(recomendacao)
+    +associaOngs(ong)
+    +associaCampanhas(ongs)
 }
 
 class Campanha {
-    +associaCampanhas(ong)
+    -descricao
 }
 
 
@@ -79,7 +92,6 @@ class AprovacaoController {
     +aprovaVoluntario(idVoluntario, recomendacao)
     +enviaEmailLoginInstrucao(voluntarioEmail, voluntarioLogin, voluntarioSenha)
     +enviaEmailResultadoAfiliacaoRecomendacao(voluntarioEmail,recomendacao)
-    +geraLoginSenhaVoluntario(voluntario)
     +rejeitaCandidato(candidato, motivo)
     +atualizaMotivoSituacaoCandidato(candidato,motivo)
     +enviaEmailRejeicao(candidatoEmail)
@@ -91,8 +103,26 @@ class Voluntario {
     -senha
     +get(idVoluntario)
     +salvaVoluntario(voluntario)
+    +setPerfil(perfil)
+    +getPerfilVoluntario()
+    +getHabilidadesVoluntario()
+    +getInteressesVoluntario()
+    +geraLoginSenhaVoluntario(voluntario)
 }
 
 AprovacaoController "1" -- "1..*" Voluntario: possui
+
+class Interesses {
+    -descricao
+}
+
+class Habilidades {
+    -descricao
+}
+
+Perfil "1" -- "1..*" Interesses: possui
+Perfil "1" -- "1..*" Habilidades: possui
+
+ONG "1" -- "0..*" Campanha: possui
 
 @enduml
