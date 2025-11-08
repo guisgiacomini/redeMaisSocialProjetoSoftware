@@ -1,98 +1,85 @@
+
 @startuml
+title Diagrama de Classes de Projeto – Fluxo de Solicitação de Afiliação
 
-title Diagrama de classes de projeto - UC003
 
-' Primeira Etapa
+' ======= CAMADA DE FRONTEIRA =======
 
-class AfiliacaoController {
-    +solicitaAfiliacao(email, cpf)
-    +validarDadosIdentificacao(dados)
-    +validarPerfil(perfil, habilidades)
+class GUI <<fronteira>> {
+    +solicitaAfiliacao(email: String, cpf: String)
+    +exibirFormularioIdentificacao()
+    +exibirFormularioPerfilHabilidades()
+    +exibirTermoCompromisso()
+    +mostrarMensagem(mensagem: String)
+}
+
+' ======= CAMADA DE CONTROLE =======
+
+class AfiliacaoController <<controle>> {
+    +solicitaAfiliacao(email: String, cpf: String)
+    +validarDadosIdentificacao(dados: Map)
+    +validarPerfil(perfil: Perfil, habilidades: List<Habilidade>, interesses: List<Interesse>)
     +registrarAceite()
-    +buscaCandidatosPendentes()
+    +criarPedidoAfiliacao(): PedidoAfiliacao
 }
 
-class PedidoAfiliacao {
-    -status
-    -data
+' ======= CAMADA DE ENTIDADES =======
+
+class Candidato <<entidade>> {
+    -nome: String
+    -sexo: Char
+    -dataNascimento: Date
+    -nacionalidade: String
+    -endereco: String
+    -profissao: String
+    -situacao: String
+    -perfil: Perfil
+    +criarCandidato(dados: Map)
+    +armazenarPerfil(perfil: Perfil, habilidades: List<Habilidade>, interesses: List<Interesse>)
+    +atualizarSituacao(status: String)
+}
+
+class PedidoAfiliacao <<entidade>> {
+    -status: String
+    -data: Date
+    -candidato: Candidato
     +criarPedidoAfiliacao()
-    +associarCandidato(candidato)
-    +buscaCandidatoPendentes()
-
+    +associarCandidato(candidato: Candidato)
 }
 
-class Candidato {
-    -nome
-    -sexo
-    -dataNascimento
-    -nacionalidade
-    -profissao
-    -situacao
-    +getCandidato()
-    +get(id)
-    +mudaSituacao(candidato)
-    +salva(candidato)
+class EmailValidador <<entidade>> {
+    +enviarLinkValidacao(email: String)
 }
 
-AfiliacaoController "1" -- "1..*" PedidoAfiliacao: possui
-PedidoAfiliacao "1" -- "1" Candidato: procura
-
-class CandidatoController {
-    +exibeInformacaoDetalhadaCandidato(id)
-    +solicitaAprovacaoCandidato(id)
+class Perfil <<entidade>> {
+    -habilidades: List<Habilidade>
+    -interesses: List<Interesse>
 }
 
-CandidatoController "1" -- "0..*" Candidato: possui
-
-class ONGController {
-    +solicitacaoRecomendacaoOngParceira(perfil)
+class Habilidade <<entidade>> {
+    -descricao: String
 }
 
-class ONG {
-    +filtroONGDeAcordoComPerfil(perfil);
-    +associaOng(ong)
+class Interesse <<entidade>> {
+    -descricao: String
 }
 
-class Perfil {
-    +procuraPerfil(perfil)
+class CandidatoCollection <<entidade>> {
+    +buscarPorEmailOuCPF(email: String, cpf: String): Candidato
 }
 
+' ======= RELACIONAMENTOS =======
 
-ONGController "1" -- "0..*" ONG: possui
-ONG "0..*" -- "1..*" Perfil: possui
+GUI "1" -- "1" AfiliacaoController : aciona
+AfiliacaoController "1" -- "1" CandidatoCollection : consulta
+AfiliacaoController "1" -- "1" PedidoAfiliacao : cria/associa
+AfiliacaoController "1" -- "1" Candidato : cria/atualiza
+AfiliacaoController "1" -- "1" EmailValidador : aciona
+AfiliacaoController "1" -- "1" Perfil : coordena
 
-class Recomendacao {
-    +criaRecomendacao(ongs)
-    +salvaRecomendacao(recomendacao)
-}
-
-class Campanha {
-    +associaCampanhas(ong)
-}
-
-
-ONGController "1" -- "1" Recomendacao: cria
-Recomendacao "0..*" -- "0..*" ONG: possui
-Recomendacao "0..*" -- "0..*" Campanha: possui
-
-class AprovacaoController {
-    +aprovaVoluntario(idVoluntario, recomendacao)
-    +enviaEmailLoginInstrucao(voluntarioEmail, voluntarioLogin, voluntarioSenha)
-    +enviaEmailResultadoAfiliacaoRecomendacao(voluntarioEmail,recomendacao)
-    +geraLoginSenhaVoluntario(voluntario)
-    +rejeitaCandidato(candidato, motivo)
-    +atualizaMotivoSituacaoCandidato(candidato,motivo)
-    +enviaEmailRejeicao(candidatoEmail)
-    +enviaEmailResultadoAfiliacaoRecomendacao(voluntarioEmail, recomendacao)
-}
-
-class Voluntario {
-    -login
-    -senha
-    +get(idVoluntario)
-    +salvaVoluntario(voluntario)
-}
-
-AprovacaoController "1" -- "1..*" Voluntario: possui
+Candidato "1" -- "1" PedidoAfiliacao : solicita
+Candidato "1" -- "1" Perfil : define
+Perfil "1" -- "*" Habilidade : contém
+Perfil "1" -- "*" Interesse : possui
 
 @enduml

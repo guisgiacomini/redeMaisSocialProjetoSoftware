@@ -3,56 +3,83 @@
 title Diagrama de Classes de Projeto – Fluxo de Solicitação de Afiliação
 
 
+' ======= CAMADA DE FRONTEIRA =======
+
 class GUI <<fronteira>> {
-    +solicitaAfiliacao(email, cpf)
+    +solicitaAfiliacao(email: String, cpf: String)
     +exibirFormularioIdentificacao()
     +exibirFormularioPerfilHabilidades()
     +exibirTermoCompromisso()
+    +mostrarMensagem(mensagem: String)
 }
 
+' ======= CAMADA DE CONTROLE =======
+
 class AfiliacaoController <<controle>> {
-    +solicitaAfiliacao(email, cpf)
-    +validarDadosIdentificacao(dados)
-    +validarPerfil(perfil, habilidades)
+    +solicitaAfiliacao(email: String, cpf: String)
+    +validarDadosIdentificacao(dados: Map)
+    +validarPerfil(perfil: Perfil, habilidades: List<Habilidade>, interesses: List<Interesse>)
     +registrarAceite()
+    +criarPedidoAfiliacao(): PedidoAfiliacao
 }
+
+' ======= CAMADA DE ENTIDADES =======
 
 class Candidato <<entidade>> {
     -nome: String
-    -sexo: Character
-    -dataNascimento: DateTime
+    -sexo: Char
+    -dataNascimento: Date
     -nacionalidade: String
     -endereco: String
     -profissao: String
-    -perfil: Perfil
     -situacao: String
-    +criarCandidato(dados)
-    +armazenarPerfil(perfil, habilidades)
-    +atualizarSituacao(status)
+    -perfil: Perfil
+    +criarCandidato(dados: Map)
+    +armazenarPerfil(perfil: Perfil, habilidades: List<Habilidade>, interesses: List<Interesse>)
+    +atualizarSituacao(status: String)
 }
 
 class PedidoAfiliacao <<entidade>> {
     -status: String
     -data: Date
+    -candidato: Candidato
     +criarPedidoAfiliacao()
-    +associarCandidato(candidato)
+    +associarCandidato(candidato: Candidato)
 }
 
 class EmailValidador <<entidade>> {
-    +enviarLinkValidacao(email)
+    +enviarLinkValidacao(email: String)
+}
+
+class Perfil <<entidade>> {
+    -habilidades: List<Habilidade>
+    -interesses: List<Interesse>
+}
+
+class Habilidade <<entidade>> {
+    -descricao: String
+}
+
+class Interesse <<entidade>> {
+    -descricao: String
 }
 
 class CandidatoCollection <<entidade>> {
-    +buscarPorEmailOuCPF(email, cpf)
+    +buscarPorEmailOuCPF(email: String, cpf: String): Candidato
 }
 
+' ======= RELACIONAMENTOS =======
 
 GUI "1" -- "1" AfiliacaoController : aciona
 AfiliacaoController "1" -- "1" CandidatoCollection : consulta
 AfiliacaoController "1" -- "1" PedidoAfiliacao : cria/associa
-AfiliacaoController "1" --"1" Candidato : cria/atualiza
+AfiliacaoController "1" -- "1" Candidato : cria/atualiza
 AfiliacaoController "1" -- "1" EmailValidador : aciona
-Candidato "1" -- "1" PedidoAfiliacao : está associado a
+AfiliacaoController "1" -- "1" Perfil : coordena
+
+Candidato "1" -- "1" PedidoAfiliacao : solicita
+Candidato "1" -- "1" Perfil : define
+Perfil "1" -- "*" Habilidade : contém
+Perfil "1" -- "*" Interesse : possui
 
 @enduml
-
