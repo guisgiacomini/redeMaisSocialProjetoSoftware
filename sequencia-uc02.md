@@ -83,7 +83,9 @@ gui -> controller: registrarAceite()
 activate controller
 
 controller -> termo: aceita()
+activate termo
 termo --> controller: termoAceito
+deactivate termo
 
 controller -> candidato: atualizarSituacao("Aguardando Validação")
 controller -> emailValidador **: enviarLinkValidacao(email)
