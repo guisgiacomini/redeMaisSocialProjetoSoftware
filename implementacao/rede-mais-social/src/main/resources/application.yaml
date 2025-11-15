@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: rede-mais-social
+
+server:
+  port: 8080
