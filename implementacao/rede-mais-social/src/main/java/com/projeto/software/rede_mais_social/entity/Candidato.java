@@ -1,11 +1,11 @@
-package com.projeto.software.rede_mais_social.model;
+package com.projeto.software.rede_mais_social.entity;
 
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
 
 @Entity
-public class Candidato {
+public class Candidato extends Papel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,7 +16,7 @@ public class Candidato {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private TipoPessoa tipoPessoa;
+    private Pessoa pessoa;
 
     @Column(unique = true, nullable = true) // Nulo se for JURIDICA
     private String cpf;
@@ -116,12 +116,12 @@ public class Candidato {
         this.email = email;
     }
 
-    public TipoPessoa getTipoPessoa() {
-        return tipoPessoa;
+    public Pessoa getTipoPessoa() {
+        return pessoa;
     }
 
-    public void setTipoPessoa(TipoPessoa tipoPessoa) {
-        this.tipoPessoa = tipoPessoa;
+    public void setTipoPessoa(Pessoa tipoPessoa) {
+        this.pessoa = tipoPessoa;
     }
 
     public String getCnpj() {
