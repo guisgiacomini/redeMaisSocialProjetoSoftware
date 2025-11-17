@@ -1,6 +1,14 @@
 package com.projeto.software.rede_mais_social.entity;
 
 
-public abstract class Pessoa {
-    
+import jakarta.persistence.*;
+import java.util.List;
+
+
+@Entity
+@Table(name = "pessoa")
+@Inheritance(strategy = InheritanceType.JOINED)
+public abstract class Pessoa extends Entidade {
+
+
 }

@@ -1,0 +1,57 @@
+package com.projeto.software.rede_mais_social.entity;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "condicao_termo")
+public class CondicaoTermo {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Lob // Para textos longos
+    private String texto;
+
+    // Muitas condições para um termo
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "termo_compromisso_id", nullable = false)
+    private TermoDeCompromisso termoDeCompromisso;
+
+    // Uma condição gera um aceite
+    @OneToOne(mappedBy = "condicaoTermo", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Aceite aceite;
+
+    // Getters e Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getTexto() {
+        return texto;
+    }
+
+    public void setTexto(String texto) {
+        this.texto = texto;
+    }
+
+    public TermoDeCompromisso getTermoDeCompromisso() {
+        return termoDeCompromisso;
+    }
+
+    public void setTermoDeCompromisso(TermoDeCompromisso termoDeCompromisso) {
+        this.termoDeCompromisso = termoDeCompromisso;
+    }
+
+    public Aceite getAceite() {
+        return aceite;
+    }
+
+    public void setAceite(Aceite aceite) {
+        this.aceite = aceite;
+    }
+}
