@@ -11,8 +11,10 @@ collections "Voluntarios" as voluntarios
 
 
 collections "Recomendacoes" as recomendacoes
+collections "Aprovações" as aprovacoes
 entity "Candidato" as candidato
 entity "Voluntario" as voluntario
+entity "Aprovacao" as aprovacao
 
 representante -> gui: aprovaVoluntario(idVoluntario, recomendacao)
 activate gui
@@ -30,9 +32,19 @@ activate gui
             
             voluntarios --> aprovacaoController: voluntario
         
+       
         aprovacaoController -> voluntario: geraLoginSenhaVoluntario(voluntario)
+        aprovacaoController -> aprovacao: <<create>>
+        activate aprovacao
+        aprovacaoController -> aprovacao: associaVoluntario(voluntario)
+        aprovacaoController -> aprovacao: insereMotivo(motivo)
+        aprovacaoController -> aprovacao: insereStatus(status)
+        aprovacaoController -> aprovacao: insereData()
+        aprovacaoController -> aprovacoes: salvaAprovacao(aprovacao): aprovacao
+        deactivate aprovacao
         deactivate voluntario
         aprovacaoController -> voluntarios: salvaVoluntario(voluntario)
+      
         
         deactivate voluntarios
 
