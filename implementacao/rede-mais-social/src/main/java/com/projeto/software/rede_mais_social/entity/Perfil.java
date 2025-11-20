@@ -11,7 +11,6 @@ public class Perfil {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String descricao;
 
     @ManyToMany
     private Set<Campanha> campanhas = new HashSet<>();
@@ -29,9 +28,8 @@ public class Perfil {
     public Perfil() {
     }
 
-    public Perfil(Integer id, String descricao, Set<Campanha> campanhas, Candidato candidato, Set<Habilidade> habilidades, Set<Interesse> interesses) {
+    public Perfil(Integer id, Set<Campanha> campanhas, Candidato candidato, Set<Habilidade> habilidades, Set<Interesse> interesses) {
         this.id = id;
-        this.descricao = descricao;
         this.campanhas = campanhas;
         this.candidato = candidato;
         this.habilidades = habilidades;
@@ -46,13 +44,6 @@ public class Perfil {
         this.id = id;
     }
 
-    public String getDescricao() {
-        return descricao;
-    }
-
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
-    }
 
     public Set<Campanha> getCampanhas() {
         return campanhas;
