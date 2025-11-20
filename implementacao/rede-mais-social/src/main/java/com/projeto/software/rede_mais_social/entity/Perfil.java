@@ -62,8 +62,6 @@ public class Perfil {
     }
 
     public Set<Habilidade> getHabilidades() {
-
-
         return habilidades;
     }
 

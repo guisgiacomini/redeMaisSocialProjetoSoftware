@@ -13,8 +13,10 @@ public class ItemAceite {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String texto;
+
     // Muitos itens para um aceite
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "aceite_id", nullable = false)
     private Aceite aceite;
 
@@ -33,5 +35,13 @@ public class ItemAceite {
 
     public void setAceite(Aceite aceite) {
         this.aceite = aceite;
+    }
+
+    public String getTexto() {
+        return texto;
+    }
+
+    public void setTexto(String texto) {
+        this.texto = texto;
     }
 }

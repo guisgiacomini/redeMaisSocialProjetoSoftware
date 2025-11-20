@@ -18,14 +18,12 @@ public class Aceite {
 
     private LocalDate data;
 
-    // Lado dono do OneToOne com CondicaoTermo
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "condicao_termo_id", unique = true)
-    private CondicaoTermo condicaoTermo;
-
     // Um aceite possui vários itens (granularidade do aceite)
     @OneToMany(mappedBy = "aceite", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemAceite> itens = new ArrayList<>();
+
+    @OneToOne(mappedBy = "aceite", cascade = CascadeType.ALL)
+    private TermoDeCompromisso termoDeCompromisso;
 
     // Getters e Setters
     public Long getId() {
@@ -44,13 +42,6 @@ public class Aceite {
         this.data = data;
     }
 
-    public CondicaoTermo getCondicaoTermo() {
-        return condicaoTermo;
-    }
-
-    public void setCondicaoTermo(CondicaoTermo condicaoTermo) {
-        this.condicaoTermo = condicaoTermo;
-    }
 
     public List<ItemAceite> getItens() {
         return itens;

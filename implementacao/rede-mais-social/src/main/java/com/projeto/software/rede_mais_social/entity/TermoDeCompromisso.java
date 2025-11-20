@@ -23,6 +23,10 @@ public class TermoDeCompromisso {
     @OneToMany(mappedBy = "termoDeCompromisso", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CondicaoTermo> condicoes = new ArrayList<>();
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "aceite_id")
+    private Aceite aceite;
+
     // Getters e Setters
     public Long getId() {
         return id;
@@ -50,5 +54,13 @@ public class TermoDeCompromisso {
 
     public List<CondicaoTermo> buscarTermoVigente(){
         return condicoes;
+    }
+
+    public Aceite getAceite() {
+        return aceite;
+    }
+
+    public void setAceite(Aceite aceite) {
+        this.aceite = aceite;
     }
 }

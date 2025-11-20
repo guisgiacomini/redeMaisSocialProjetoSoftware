@@ -18,9 +18,6 @@ public class CondicaoTermo {
     @JoinColumn(name = "termo_compromisso_id", nullable = false)
     private TermoDeCompromisso termoDeCompromisso;
 
-    // Uma condição gera um aceite
-    @OneToOne(mappedBy = "condicaoTermo", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Aceite aceite;
 
     // Getters e Setters
     public Long getId() {
@@ -47,11 +44,4 @@ public class CondicaoTermo {
         this.termoDeCompromisso = termoDeCompromisso;
     }
 
-    public Aceite getAceite() {
-        return aceite;
-    }
-
-    public void setAceite(Aceite aceite) {
-        this.aceite = aceite;
-    }
 }

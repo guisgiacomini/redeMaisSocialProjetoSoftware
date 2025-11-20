@@ -2,18 +2,12 @@ package com.projeto.software.rede_mais_social.controller;
 
 import com.projeto.software.rede_mais_social.dto.AfiliacaoResponseDTO;
 import com.projeto.software.rede_mais_social.dto.PedidoAfiliacaoDTO;
-import com.projeto.software.rede_mais_social.repository.CandidatoRepository;
-import com.projeto.software.rede_mais_social.repository.PedidoRepository;
-import com.projeto.software.rede_mais_social.repository.VoluntarioRepository;
+import com.projeto.software.rede_mais_social.repository.*;
 import org.springframework.http.ResponseEntity;
 import com.projeto.software.rede_mais_social.dto.HabilidadesInteresses;
 import com.projeto.software.rede_mais_social.entity.*;
-import com.projeto.software.rede_mais_social.repository.TermoDeCompromissoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,15 +18,18 @@ import java.time.LocalDate;
 @RequestMapping("/afiliacao")
 public class AfiliacaoController {
 
-    @Autowired
     private CandidatoRepository candidatoRepository;
     private VoluntarioRepository voluntarioRepository;
+    private CondicaoTermoRepository condicaoTermoRepository;
     private PedidoRepository pedidoRepository;
     private List<Candidato> candidatos;
     private TermoDeCompromisso termoDeCompromisso;
 
     @Autowired
-    public AfiliacaoController(CandidatoRepository repository, TermoDeCompromissoRepository termoDeCompromissoRepository) {
+    public AfiliacaoController(CandidatoRepository repository, VoluntarioRepository voluntarioRepository, CondicaoTermoRepository condicaoTermoRepository, PedidoRepository pedidoRepository, TermoDeCompromissoRepository termoDeCompromissoRepository) {
+        this.voluntarioRepository = voluntarioRepository;
+        this.condicaoTermoRepository = condicaoTermoRepository;
+        this.pedidoRepository = pedidoRepository;
         this.termoDeCompromisso = termoDeCompromissoRepository.findAll().get(0);
         this.candidatoRepository = repository;
         this.candidatos = repository.findAll();
@@ -73,7 +70,7 @@ public class AfiliacaoController {
    
 
     @PostMapping("/registrar-perfil-completo")
-    public List<String> registrarPerfilCompleto(@RequestBody HabilidadesInteresses habilidadesInteresses){
+    public ResponseEntity<List<String>> registrarPerfilCompleto(@RequestBody HabilidadesInteresses habilidadesInteresses){
 
         Candidato candidato = candidatos.stream().filter(candidatoIteracao -> {
 
@@ -93,8 +90,40 @@ public class AfiliacaoController {
 
         candidatoRepository.save(candidato);
 
-        List<String> condicaoTermos = termoDeCompromisso.buscarTermoVigente().stream().map(condicao -> condicao.getTexto()).toList();
+        List<String> condicaoTermos = termoDeCompromisso.buscarTermoVigente().stream()
+                .map(condicao -> condicao.getTexto()).toList();
 
-        return condicaoTermos;
+        return ResponseEntity.ok(condicaoTermos);
+    }
+
+    @PostMapping("/registar-aceite/{idCandidato}/{idPedido}")
+    public ResponseEntity<?> registrarAceite(@PathVariable Integer idCandidato, @RequestBody String condicao, @PathVariable Integer idPedido){
+        Candidato candidato = candidatoRepository.findById(idCandidato).get();
+        Optional<CondicaoTermo> condicaoTermo = condicaoTermoRepository.findByTexto(condicao);
+        if (condicaoTermo.isEmpty()){
+            return ResponseEntity.badRequest().body("Condição não encontrada");
+        }
+        CondicaoTermo condicaoDoTermo = condicaoTermo.get();
+        Aceite aceite = new Aceite();
+        aceite.setData(LocalDate.now());
+
+        ItemAceite itemAceite = new ItemAceite();
+        itemAceite.setTexto(condicao);
+        itemAceite.setAceite(aceite);
+        aceite.getItens().add(itemAceite);
+
+        Optional<PedidoAfiliacao> pedido = pedidoRepository.findById(idPedido);
+        if (pedido.isEmpty()){
+            return ResponseEntity.badRequest().body("Pedido Afiliacao não encontrado.");
+        }
+
+        PedidoAfiliacao pedidoAfiliacao = pedido.get();
+        pedidoAfiliacao.getTermoDeCompromisso().setAceite(aceite);
+        pedidoAfiliacao.setStatus("Aguardando Validação.");
+        candidato.setPedidoAfiliacao(pedidoAfiliacao);
+
+        candidato = candidatoRepository.save(candidato);
+
+        return ResponseEntity.ok(candidato.getEmail());
     }
 }
