@@ -1,4 +1,4 @@
 package com.projeto.software.rede_mais_social.repository;
 
-public interface VoluntarioRepository {
+public interface VoluntarioRepository extends PapelRepository{
 }

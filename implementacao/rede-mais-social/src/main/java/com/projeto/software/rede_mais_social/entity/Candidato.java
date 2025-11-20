@@ -1,6 +1,8 @@
 package com.projeto.software.rede_mais_social.entity;
 
+import com.projeto.software.rede_mais_social.repository.CandidatoRepository;
 import jakarta.persistence.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 
@@ -50,7 +52,6 @@ public class Candidato extends Papel {
     public void setEmail(String email) {
         this.email = email;
     }
-
 
     public String getCpf() {
         return cpf;

@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @NoRepositoryBean
 public interface PapelRepository extends JpaRepository<Papel, Integer> {
+    boolean existsByCpfOrEmail(String documento, String email);
 }
