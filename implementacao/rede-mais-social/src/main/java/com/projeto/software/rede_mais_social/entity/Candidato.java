@@ -24,88 +24,29 @@ public class Candidato extends Papel {
     @Column(unique = true, nullable = true) // Nulo se for FISICA
     private String cnpj;
 
-    private String nome;
-    private String sexo;
-    private LocalDate dataNascimento;
-    private String nacionalidade;
-    private String enderecoResidencial;
-    private String enderecoComercial; // Pode ser um objeto @Embedded
-    private String profissao;
-
     // Um candidato tem um pedido
-    @OneToOne(mappedBy = "candidato", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pedido_afiliacao_id")
     private PedidoAfiliacao pedidoAfiliacao;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "perfil_id", referencedColumnName = "id")
+    @OneToOne(mappedBy = "candidato", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Geografica localizacaoGeografica;
+
+    @OneToOne(mappedBy = "candidato", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Perfil perfil;
 
     // --- Construtor Vazio (exigido pelo JPA) ---
     public Candidato() {
     }
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public PedidoAfiliacao getPedidoAfiliacao() {
-        return pedidoAfiliacao;
-    }
-
-    public void setPedidoAfiliacao(PedidoAfiliacao pedidoAfiliacao) {
-        this.pedidoAfiliacao = pedidoAfiliacao;
-    }
-
-    public Perfil getPerfil() {
-        return perfil;
-    }
-
-    public void setPerfil(Perfil perfil) {
-        this.perfil = perfil;
-    }
-
-    public String getProfissao() {
-        return profissao;
-    }
-
-    public void setProfissao(String profissao) {
-        this.profissao = profissao;
-    }
-
-    public String getEnderecoResidencial() {
-        return enderecoResidencial;
-    }
-
-    public void setEnderecoResidencial(String enderecoResidencial) {
-        this.enderecoResidencial = enderecoResidencial;
-    }
-
-    public String getSexo() {
-        return sexo;
-    }
-
-    public void setSexo(String sexo) {
-        this.sexo = sexo;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getCpf() {
-        return cpf;
-    }
-
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
     }
 
     public String getEmail() {
@@ -116,12 +57,20 @@ public class Candidato extends Papel {
         this.email = email;
     }
 
-    public Pessoa getTipoPessoa() {
+    public Pessoa getPessoa() {
         return pessoa;
     }
 
-    public void setTipoPessoa(Pessoa tipoPessoa) {
-        this.pessoa = tipoPessoa;
+    public void setPessoa(Pessoa pessoa) {
+        this.pessoa = pessoa;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
 
     public String getCnpj() {
@@ -132,27 +81,27 @@ public class Candidato extends Papel {
         this.cnpj = cnpj;
     }
 
-    public String getNacionalidade() {
-        return nacionalidade;
+    public PedidoAfiliacao getPedidoAfiliacao() {
+        return pedidoAfiliacao;
     }
 
-    public void setNacionalidade(String nacionalidade) {
-        this.nacionalidade = nacionalidade;
+    public void setPedidoAfiliacao(PedidoAfiliacao pedidoAfiliacao) {
+        this.pedidoAfiliacao = pedidoAfiliacao;
     }
 
-    public LocalDate getDataNascimento() {
-        return dataNascimento;
+    public Geografica getLocalizacaoGeografica() {
+        return localizacaoGeografica;
     }
 
-    public void setDataNascimento(LocalDate dataNascimento) {
-        this.dataNascimento = dataNascimento;
+    public void setLocalizacaoGeografica(Geografica localizacaoGeografica) {
+        this.localizacaoGeografica = localizacaoGeografica;
     }
 
-    public String getEnderecoComercial() {
-        return enderecoComercial;
+    public Perfil getPerfil() {
+        return perfil;
     }
 
-    public void setEnderecoComercial(String enderecoComercial) {
-        this.enderecoComercial = enderecoComercial;
+    public void setPerfil(Perfil perfil) {
+        this.perfil = perfil;
     }
 }
