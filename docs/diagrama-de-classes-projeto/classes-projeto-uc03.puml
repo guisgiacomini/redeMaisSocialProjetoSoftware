@@ -81,6 +81,7 @@ class Recomendacao {
 
 class Campanha {
     -descricao
+    +getOng()
 }
 
 
@@ -124,5 +125,28 @@ Perfil "1" -- "1..*" Interesses: possui
 Perfil "1" -- "1..*" Habilidades: possui
 
 ONG "1" -- "0..*" Campanha: possui
+
+class Aprovacao {
+    -data
+    -status
+    -motivo
+    +associaVoluntario(voluntario)
+    +insereMotivo(motivo)
+    +insereStatus(status)
+    +insereData(data)
+    +salvaAprovacao(aprovacao)
+}
+
+AprovacaoController "1" -- "0..*" Aprovacao: possui
+
+class Vaga {
+    +retornaVagaDeAcordoComPerfil(perfil)
+    +retornaCampanha()
+}
+
+ONGController "1" -- "0..*" Vaga: possui
+
+
+Vaga "0..*" -- "1" Campanha: faz parte
 
 @enduml
