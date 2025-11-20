@@ -5,6 +5,10 @@ import jakarta.persistence.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Candidato extends Papel {
@@ -84,5 +88,29 @@ public class Candidato extends Papel {
 
     public void setPerfil(Perfil perfil) {
         this.perfil = perfil;
+    }
+
+    public Perfil definePerfil(List<String> habilidades, List<String> interesses){
+        Perfil perfilDefinido = new Perfil();
+
+        Set<Habilidade> listaHabilidades = new HashSet<>();
+
+        for (String habilidade: habilidades){
+            Habilidade habilidadeNova = new Habilidade();
+            habilidadeNova.setDescricao(habilidade);
+            listaHabilidades.add(habilidadeNova);
+        }
+
+        Set<Interesse> listaInteresses = new HashSet<>();
+
+        for (String interesse: interesses){
+            Interesse interesseNovo = new Interesse();
+            interesseNovo.setDescricao(interesse);
+            listaInteresses.add(interesseNovo);
+        }
+        perfilDefinido.setHabilidades(listaHabilidades);
+        perfilDefinido.setInteresses(listaInteresses);
+
+        return perfilDefinido;
     }
 }

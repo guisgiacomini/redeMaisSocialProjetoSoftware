@@ -47,4 +47,8 @@ public class TermoDeCompromisso {
     public void setCondicoes(List<CondicaoTermo> condicoes) {
         this.condicoes = condicoes;
     }
+
+    public List<CondicaoTermo> buscarTermoVigente(){
+        return condicoes;
+    }
 }
