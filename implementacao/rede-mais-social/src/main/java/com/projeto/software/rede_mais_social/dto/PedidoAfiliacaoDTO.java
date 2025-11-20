@@ -4,6 +4,8 @@ import java.time.LocalDate;
 
 public class PedidoAfiliacaoDTO {
 
+    private Integer pedidoId;
+
     private String email;
     private String tipoPessoa; // "FISICA" ou "JURIDICA"
     private String documento;  // CPF ou CNPJ
@@ -23,6 +25,9 @@ public class PedidoAfiliacaoDTO {
 
 
     // --- Getters e Setters ---
+
+    public Integer getPedidoId() { return pedidoId; }
+    public void setPedidoId(Integer pedidoId) { this.pedidoId = pedidoId; }
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }

@@ -9,6 +9,8 @@ import com.projeto.software.rede_mais_social.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,7 +24,9 @@ public class AfiliacaoController {
     private VoluntarioRepository voluntarioRepository;
     private CondicaoTermoRepository condicaoTermoRepository;
     private PedidoRepository pedidoRepository;
+    private PessoaRepository pessoaRepository;
     private List<Candidato> candidatos;
+    private List<Voluntario> voluntarios;
     private TermoDeCompromisso termoDeCompromisso;
 
     @Autowired
@@ -40,14 +44,71 @@ public class AfiliacaoController {
     public ResponseEntity<?> iniciarProcessoAfiliacao(@RequestBody PedidoAfiliacaoDTO dto) {
 
         // 1. Verificar Elegibilidade (Diagrama: controller -> collectionCandidato)
-        boolean candidatoExiste = candidatoRepository.existsByCpfOrEmail(dto.getDocumento(), dto.getEmail());
+        boolean candidatoExiste = candidatos.stream().anyMatch(candidatoIteracao -> {
+            Entidade entidade = candidatoIteracao.getEntidade();
+
+            if (entidade == null) return false;
+
+            // A. Verifica Documento (CPF ou CNPJ) nas subclasses de Entidade
+            if (entidade instanceof Fisica && dto.getDocumento().equals(((Fisica) entidade).getCpf())) {
+                return true;
+            }
+            if (entidade instanceof Juridica && dto.getDocumento().equals(((Juridica) entidade).getCnpj())) {
+                return true;
+            }
+
+            // B. Verifica E-mail (Iterando sobre as Localizações da Entidade)
+            List<Localizacao> localizacoes = entidade.getLocalizacoes();
+            if (localizacoes != null) {
+                for (Localizacao localizacao : localizacoes) {
+                    // Verifica se a localização é um Email
+                    if (localizacao instanceof Email) {
+                        Email emailEntidade = (Email) localizacao;
+                        if (emailEntidade.getEmail() != null &&
+                                emailEntidade.getEmail().equalsIgnoreCase(dto.getEmail())) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        });
+
         if (candidatoExiste) {
             return ResponseEntity.badRequest()
                     .body(new AfiliacaoResponseDTO(null, "ERRO", "Candidato já encontrado na base de dados."));
         }
 
         // 2. Verificar Voluntários (Diagrama: controller -> collectionVoluntario)
-        boolean voluntarioExiste = voluntarioRepository.existsByCpfOrEmail(dto.getDocumento(), dto.getEmail());
+        boolean voluntarioExiste = voluntarios.stream().anyMatch(voluntarioIteracao -> {
+            Entidade entidade = voluntarioIteracao.getEntidade();
+
+            if (entidade == null) return false;
+
+            // A. Verifica Documento (CPF ou CNPJ) nas subclasses de Entidade
+            if (entidade instanceof Fisica && dto.getDocumento().equals(((Fisica) entidade).getCpf())) {
+                return true;
+            }
+            if (entidade instanceof Juridica && dto.getDocumento().equals(((Juridica) entidade).getCnpj())) {
+                return true;
+            }
+
+            // B. Verifica E-mail (Iterando sobre as Localizações da Entidade)
+            List<Localizacao> localizacoes = entidade.getLocalizacoes();
+            if (localizacoes != null) {
+                for (Localizacao localizacao : localizacoes) {
+                    // Verifica se a localização é um Email
+                    if (localizacao instanceof Email) {
+                        Email emailEntidade = (Email) localizacao;
+                        if (emailEntidade.getEmail() != null &&
+                                emailEntidade.getEmail().equalsIgnoreCase(dto.getEmail())) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        });
         if (voluntarioExiste) {
             return ResponseEntity.badRequest()
                     .body(new AfiliacaoResponseDTO(null, "ERRO", "Voluntário já encontrado na base de dados."));
@@ -66,6 +127,58 @@ public class AfiliacaoController {
                 "INICIADO",
                 "Processo iniciado com sucesso. Prossiga para identificação."
         )); 
+    }
+
+    @PostMapping("/submeter-dados-identificacao")
+    public ResponseEntity<?> submeterDadosIdentificacao(@RequestBody PedidoAfiliacaoDTO dto) {
+        if (dto.getPedidoId() == null) return ResponseEntity.badRequest().build();
+
+        PedidoAfiliacao pedido = pedidoRepository.findById(dto.getPedidoId())
+                .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
+
+        Pessoa pessoa;
+        if ("FISICA".equalsIgnoreCase(dto.getTipoPessoa())) {
+            Fisica fisica = new Fisica();
+            fisica.setCpf(dto.getDocumento());
+            pessoa = fisica;
+        } else {
+            Juridica juridica = new Juridica();
+            juridica.setCnpj(dto.getDocumento());
+            pessoa = juridica;
+        }
+        pessoa.setNome(dto.getNome());
+
+        List<Localizacao> localizacoes = new ArrayList<>();
+
+        // 1. Criar Email (agora é uma Localizacao)
+        Email email = new Email();
+        email.setEmail(dto.getEmail());
+        email.setEntidade(pessoa); // Vincula à pessoa (que é Entidade)
+        localizacoes.add(email);
+
+        // 2. Criar Endereço (Geografica)
+        Geografica endereco = new Geografica();
+        endereco.setEndereco(dto.getEnderecoResidencial());
+        endereco.setCidade(dto.getEnderecoComercial());
+        endereco.setEntidade(pessoa); // Vincula à pessoa
+        localizacoes.add(endereco);
+
+        // Adiciona tudo à lista herdada de Entidade
+        pessoa.setLocalizacoes(localizacoes);
+
+        // Salva Pessoa (cascade salva Localizacoes: Email e Geografica)
+        pessoaRepository.save(pessoa);
+
+        Candidato candidato = new Candidato();
+        candidato.setEntidade(pessoa);
+        candidato.setEmail(dto.getEmail());
+        candidatoRepository.save(candidato);
+
+        pedido.setCandidato(candidato);
+        candidato.setPedidoAfiliacao(pedido);
+        pedidoRepository.save(pedido);
+
+        return ResponseEntity.ok(new AfiliacaoResponseDTO(pedido.getId(), "DADOS_REGISTRADOS", "Sucesso."));
     }
    
 
