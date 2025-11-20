@@ -1,6 +1,8 @@
 package com.projeto.software.rede_mais_social.entity;
 
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -13,11 +15,11 @@ public class Representante {
 
     // Um representante solicita/realiza várias aprovações
     @OneToMany(mappedBy = "representante")
-    private List<Aprovacao> aprovacoes;
+    private List<Aprovacao> aprovacoes = new ArrayList<>();
 
     // Um representante especifica várias recomendações
     @OneToMany(mappedBy = "representante")
-    private List<Recomendacao> recomendacoes;
+    private List<Recomendacao> recomendacoes = new ArrayList<>();
 
     // Um representante 'avalia' uma Pessoa (assumindo ManyToOne)
     @ManyToOne(fetch = FetchType.LAZY)

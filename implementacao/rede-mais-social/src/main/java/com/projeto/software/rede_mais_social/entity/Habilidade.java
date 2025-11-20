@@ -1,6 +1,8 @@
 package com.projeto.software.rede_mais_social.entity;
 
 import jakarta.persistence.*;
+
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -14,7 +16,7 @@ public class Habilidade {
     private String descricao;
 
     @ManyToMany(mappedBy = "habilidades")
-    private Set<Perfil> perfis;
+    private Set<Perfil> perfis = new HashSet<>();
 
     // Getters e Setters
     public Long getId() {

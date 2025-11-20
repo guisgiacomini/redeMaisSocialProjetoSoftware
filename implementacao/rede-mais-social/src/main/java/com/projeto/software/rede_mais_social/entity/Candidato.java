@@ -14,9 +14,6 @@ public class Candidato extends Papel {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @Column(nullable = false)
-    private Pessoa pessoa;
-
     @Column(unique = true, nullable = true) // Nulo se for JURIDICA
     private String cpf;
 
@@ -28,14 +25,12 @@ public class Candidato extends Papel {
     @JoinColumn(name = "pedido_afiliacao_id")
     private PedidoAfiliacao pedidoAfiliacao;
 
-    @OneToOne(mappedBy = "candidato", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Geografica localizacaoGeografica;
-
     @OneToOne(mappedBy = "candidato", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Perfil perfil;
 
     // --- Construtor Vazio (exigido pelo JPA) ---
     public Candidato() {
+        super();
     }
 
     @Override
@@ -56,13 +51,6 @@ public class Candidato extends Papel {
         this.email = email;
     }
 
-    public Pessoa getPessoa() {
-        return pessoa;
-    }
-
-    public void setPessoa(Pessoa pessoa) {
-        this.pessoa = pessoa;
-    }
 
     public String getCpf() {
         return cpf;
@@ -88,13 +76,6 @@ public class Candidato extends Papel {
         this.pedidoAfiliacao = pedidoAfiliacao;
     }
 
-    public Geografica getLocalizacaoGeografica() {
-        return localizacaoGeografica;
-    }
-
-    public void setLocalizacaoGeografica(Geografica localizacaoGeografica) {
-        this.localizacaoGeografica = localizacaoGeografica;
-    }
 
     public Perfil getPerfil() {
         return perfil;

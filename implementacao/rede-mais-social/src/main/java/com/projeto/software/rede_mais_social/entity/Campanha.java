@@ -2,6 +2,7 @@ package com.projeto.software.rede_mais_social.entity;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -22,7 +23,7 @@ public class Campanha {
 
     // Lado inverso do relacionamento Muitos-para-Muitos com Perfil
     @ManyToMany(mappedBy = "campanhas")
-    private Set<Perfil> perfis;
+    private Set<Perfil> perfis = new HashSet<>();
 
     // Getters e Setters
     public Long getId() {

@@ -1,6 +1,8 @@
 package com.projeto.software.rede_mais_social.entity;
 
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -19,7 +21,7 @@ public class TermoDeCompromisso {
 
     // Um termo possui várias condições
     @OneToMany(mappedBy = "termoDeCompromisso", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CondicaoTermo> condicoes;
+    private List<CondicaoTermo> condicoes = new ArrayList<>();
 
     // Getters e Setters
     public Long getId() {

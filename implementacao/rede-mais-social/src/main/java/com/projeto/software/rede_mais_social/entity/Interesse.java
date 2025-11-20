@@ -2,6 +2,7 @@ package com.projeto.software.rede_mais_social.entity;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -18,7 +19,7 @@ public class Interesse {
     private String descricao;
 
     @ManyToMany(mappedBy = "interesses")
-    private Set<Perfil> perfis;
+    private Set<Perfil> perfis = new HashSet<>();
 
     // Getters e Setters
     public Long getId() {

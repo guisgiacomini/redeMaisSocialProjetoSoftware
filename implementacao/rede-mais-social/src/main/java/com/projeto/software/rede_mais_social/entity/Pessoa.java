@@ -10,5 +10,6 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Pessoa extends Entidade {
 
-
+    public Pessoa() {
+    }
 }

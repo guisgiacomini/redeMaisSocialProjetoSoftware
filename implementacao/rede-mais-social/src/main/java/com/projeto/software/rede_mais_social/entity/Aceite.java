@@ -2,6 +2,7 @@ package com.projeto.software.rede_mais_social.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,7 +25,7 @@ public class Aceite {
 
     // Um aceite possui vários itens (granularidade do aceite)
     @OneToMany(mappedBy = "aceite", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ItemAceite> itens;
+    private List<ItemAceite> itens = new ArrayList<>();
 
     // Getters e Setters
     public Long getId() {

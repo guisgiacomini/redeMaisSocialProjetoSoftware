@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -27,7 +28,7 @@ public class PedidoAfiliacao {
 
     // Um pedido passa por várias aprovações
     @OneToMany(mappedBy = "pedidoAfiliacao", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Aprovacao> aprovacoes;
+    private List<Aprovacao> aprovacoes = new ArrayList<>();
 
     // Um pedido contém um termo de compromisso
     @OneToOne(mappedBy = "pedidoAfiliacao", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -4,7 +4,7 @@ spring:
 
   jpa:
     hibernate:
-      dll-auto: create-drop
+      ddl-auto: create-drop
 
     properties:
       hibernate:

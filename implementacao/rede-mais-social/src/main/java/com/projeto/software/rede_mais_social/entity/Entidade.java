@@ -8,7 +8,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "entidade")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Entidade {
+public class Entidade {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,6 +22,16 @@ public abstract class Entidade {
 
     @OneToOne(mappedBy = "entidade", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Papel papel;
+
+    public Entidade() {
+    }
+
+    public Entidade(Long id, String nome, List<Localizacao> localizacoes, Papel papel) {
+        this.id = id;
+        this.nome = nome;
+        this.localizacoes = localizacoes;
+        this.papel = papel;
+    }
 
     // @OneToMany(mappedBy = "entidadeSolicitante", cascade = CascadeType.ALL)
     // private List<Recomendacao> recomendacoesSolicitadas;
