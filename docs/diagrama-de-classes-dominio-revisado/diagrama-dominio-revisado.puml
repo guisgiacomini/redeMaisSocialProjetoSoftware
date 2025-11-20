@@ -5,7 +5,7 @@ class Entidade {
 }
 
 class Vaga {
- -quantidade
+ 
 }
 
 class Papel 
@@ -123,7 +123,7 @@ Entidade "1" -- "1" Perfil: possui
 Entidade "1" *-- "1..*" Localizacao: possui
 
 ONG "1" *-- "0..*" Campanha: abre
-Campanha "1..*" -- "1..*" Vaga: contém
+Campanha "1" -- "1..*" Vaga: contém
 
 Vaga "1..*" -- "1..*" Perfil: possui
 Vaga "1..*" -- "0..*" Voluntario: contém
