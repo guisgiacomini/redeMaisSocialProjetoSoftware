@@ -1,6 +1,24 @@
 spring:
   application:
     name: rede-mais-social
+  jpa:
+
+    hibernate:
+      dll-auto: create-drop
+
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/rede_mais_social
+    driverClassName: org.postgresql.Driver
+    username: admin
+    password: admin
+
+  output:
+    ansi:
+      enabled: ALWAYS
 
 server:
   port: 8080
