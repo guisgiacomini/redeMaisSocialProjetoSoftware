@@ -78,8 +78,10 @@ public class AfiliacaoController {
         Candidato candidato = candidatos.stream().filter(candidatoIteracao -> {
 
             List<Localizacao> localizacoes = candidatoIteracao.getEntidade().getLocalizacoes();
-            if (localizacoes instanceof Email email) {
-                return habilidadesInteresses.email().equals(email.getEmail());
+            for (Localizacao localizacao: localizacoes){
+                if (localizacao instanceof Email email) {
+                    return habilidadesInteresses.email().equals(email.getEmail());
+                }
             }
             return false;
         }).toList().get(0);
