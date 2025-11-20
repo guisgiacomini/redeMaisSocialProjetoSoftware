@@ -25,6 +25,7 @@ public class AfiliacaoController {
     private CondicaoTermoRepository condicaoTermoRepository;
     private PedidoRepository pedidoRepository;
     private PessoaRepository pessoaRepository;
+    private TermoDeCompromissoRepository termoDeCompromissoRepository;
     private List<Candidato> candidatos;
     private List<Voluntario> voluntarios;
     private TermoDeCompromisso termoDeCompromisso;
@@ -34,7 +35,6 @@ public class AfiliacaoController {
         this.voluntarioRepository = voluntarioRepository;
         this.condicaoTermoRepository = condicaoTermoRepository;
         this.pedidoRepository = pedidoRepository;
-        this.termoDeCompromisso = termoDeCompromissoRepository.findAll().get(0);
         this.candidatoRepository = repository;
         this.candidatos = repository.findAll();
     }
@@ -203,7 +203,7 @@ public class AfiliacaoController {
 
         candidatoRepository.save(candidato);
 
-        List<String> condicaoTermos = termoDeCompromisso.buscarTermoVigente().stream()
+        List<String> condicaoTermos = termoDeCompromissoRepository.findAll().get(0).buscarTermoVigente().stream()
                 .map(condicao -> condicao.getTexto()).toList();
 
         return ResponseEntity.ok(condicaoTermos);

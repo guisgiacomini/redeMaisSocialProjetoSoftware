@@ -14,7 +14,7 @@ public class CondicaoTermo {
     private String texto;
 
     // Muitas condições para um termo
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "termo_compromisso_id", nullable = false)
     private TermoDeCompromisso termoDeCompromisso;
 

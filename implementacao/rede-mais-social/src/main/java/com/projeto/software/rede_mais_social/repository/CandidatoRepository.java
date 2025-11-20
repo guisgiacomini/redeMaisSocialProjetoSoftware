@@ -11,5 +11,4 @@ public interface CandidatoRepository extends JpaRepository<Candidato, Integer> {
 
     Optional<Candidato> findByEmail(String email);
 
-    boolean existsByCpfOrEmail(String documento, String email);
 }
