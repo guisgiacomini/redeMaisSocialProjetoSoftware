@@ -8,36 +8,37 @@ collections "Candidatos" as candidatos
 collections "ONGs" as ongs
 collections "Campanhas" as campanhas
 collections "Perfis" as perfis
+collections "Vagas" as vagas
 
 entity "Perfil" as perfil
 entity "ONG" as ong
 entity "Candidato" as candidato
 entity "Recomendacao" as recomendacao
 entity "Campanha" as campanha
+entity "Vaga" as vaga
 
 
 representante -> gui: solicitaçãoRecomendacaoOngParceira(perfil)
 activate gui
     gui -> ongController: solicitaçãoRecomendacaoOngParceira(perfil)
     activate ongController
-        ongController -> ongs: filtroONGDeAcordoComPerfil(perfil)
-        activate ongs
-            ongs -> ong: retornaDeAcordoComPerfil(perfil)
+        ongController -> vagas: retornaVagasDeAcordoComPerfil(perfil)
+        activate vagas
+            vagas --> ongController: listaVagas
+            loop 'Para cada vaga em listaVagas'
+                ongController -> vaga: retornaCampanha()
+                activate vaga
+                    vaga -> campanha: getOng()
+                    activate campanha
+                        campanha --> vaga: ong
+                    deactivate campanha
+                    vaga --> ongController: ong
+                deactivate vaga
+            end
             
-            activate ong
-                ong -> perfis: procuraPerfil(perfil)
-                activate  perfis
-                    perfis -> perfil: getPerfil(perfil)
-                        activate perfil
-                            perfil --> perfis: perfil
-                        deactivate perfil
-                    perfis --> ong: perfil
-                deactivate perfis
-                ong --> ongs: ong
-            deactivate ong
-            ongs --> ongController: ongs
+            activate campanha
 
-        deactivate ongs
+            
 
 
         ongController -> recomendacao: create
