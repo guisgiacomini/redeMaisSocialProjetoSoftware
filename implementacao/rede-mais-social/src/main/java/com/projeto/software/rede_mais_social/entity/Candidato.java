@@ -14,7 +14,6 @@ public class Candidato extends Papel {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Pessoa pessoa;
 

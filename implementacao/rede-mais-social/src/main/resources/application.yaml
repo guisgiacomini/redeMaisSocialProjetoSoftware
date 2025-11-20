@@ -1,8 +1,8 @@
 spring:
   application:
     name: rede-mais-social
-  jpa:
 
+  jpa:
     hibernate:
       dll-auto: create-drop
 
