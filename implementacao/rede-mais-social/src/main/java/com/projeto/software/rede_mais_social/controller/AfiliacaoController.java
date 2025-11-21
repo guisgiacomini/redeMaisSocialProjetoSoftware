@@ -229,8 +229,6 @@ public class AfiliacaoController {
         Candidato candidato = candidatoRepository.findById(idCandidato).get();
         condicao = condicao.replaceAll("^\"|\"$", "");
         Optional<CondicaoTermo> condicaoTermo = condicaoTermoRepository.findByTexto(condicao);
-        System.out.println(condicaoTermo);
-        System.out.println(condicao);
         if (condicaoTermo.isEmpty()){
             return ResponseEntity.badRequest().body("Condição não encontrada");
         }
