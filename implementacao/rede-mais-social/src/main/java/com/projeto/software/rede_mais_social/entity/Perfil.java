@@ -18,11 +18,11 @@ public class Perfil {
     @OneToOne
     private Candidato candidato;
 
-    @ManyToMany
-    private Set<Habilidade> habilidades;
+    @ManyToMany(cascade = CascadeType.ALL)
+    private Set<Habilidade> habilidades = new HashSet<>();
 
-    @ManyToMany
-    private Set<Interesse> interesses;
+    @ManyToMany(cascade = CascadeType.ALL)
+    private Set<Interesse> interesses = new HashSet<>();
 
 
     public Perfil() {

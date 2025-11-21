@@ -18,7 +18,7 @@ public class Interesse {
 
     private String descricao;
 
-    @ManyToMany(mappedBy = "interesses")
+    @ManyToMany(mappedBy = "interesses", cascade = CascadeType.ALL)
     private Set<Perfil> perfis = new HashSet<>();
 
     // Getters e Setters

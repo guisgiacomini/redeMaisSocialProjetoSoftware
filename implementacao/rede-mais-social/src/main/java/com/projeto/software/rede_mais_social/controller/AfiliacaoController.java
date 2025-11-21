@@ -27,16 +27,21 @@ public class AfiliacaoController {
     private PessoaRepository pessoaRepository;
     private TermoDeCompromissoRepository termoDeCompromissoRepository;
     private List<Candidato> candidatos;
-    private List<Voluntario> voluntarios;
+    private List<Papel> voluntarios;
     private TermoDeCompromisso termoDeCompromisso;
 
     @Autowired
-    public AfiliacaoController(CandidatoRepository repository, VoluntarioRepository voluntarioRepository, CondicaoTermoRepository condicaoTermoRepository, PedidoRepository pedidoRepository, TermoDeCompromissoRepository termoDeCompromissoRepository) {
+    public AfiliacaoController(CandidatoRepository repository, VoluntarioRepository voluntarioRepository, CondicaoTermoRepository condicaoTermoRepository,
+                               PedidoRepository pedidoRepository, TermoDeCompromissoRepository termoDeCompromissoRepository,
+                                PessoaRepository pessoaRepository) {
         this.voluntarioRepository = voluntarioRepository;
         this.condicaoTermoRepository = condicaoTermoRepository;
         this.pedidoRepository = pedidoRepository;
         this.candidatoRepository = repository;
         this.candidatos = repository.findAll();
+        this.voluntarios = voluntarioRepository.findAll();
+        this.pessoaRepository = pessoaRepository;
+        this.termoDeCompromissoRepository = termoDeCompromissoRepository;
     }
     
 
@@ -121,6 +126,8 @@ public class AfiliacaoController {
 
         pedidoRepository.save(pedido);
 
+        System.out.println("PEDIDO DE AFILIAÇÃO INICIADO:" + pedido.getId());
+
         // 4. Retorno (O ID é essencial para a GUI continuar o fluxo)
         return ResponseEntity.ok(new AfiliacaoResponseDTO(
                 pedido.getId(),
@@ -177,14 +184,22 @@ public class AfiliacaoController {
         pedido.setCandidato(candidato);
         candidato.setPedidoAfiliacao(pedido);
         pedidoRepository.save(pedido);
+        AfiliacaoResponseDTO response = new AfiliacaoResponseDTO(
+                pedido.getId(),
+                "DADOS_REGISTRADOS",
+                "Dados pessoais registrados com sucesso. Prossiga para o perfil."
+        );
 
-        return ResponseEntity.ok(new AfiliacaoResponseDTO(pedido.getId(), "DADOS_REGISTRADOS", "Sucesso."));
+        // AQUI ESTÁ O QUE FALTAVA:
+        response.setCandidatoId(candidato.getId());
+
+        return ResponseEntity.ok(response);
     }
    
 
     @PostMapping("/registrar-perfil-completo")
     public ResponseEntity<List<String>> registrarPerfilCompleto(@RequestBody HabilidadesInteresses habilidadesInteresses){
-
+        candidatos = candidatoRepository.findAll();
         Candidato candidato = candidatos.stream().filter(candidatoIteracao -> {
 
             List<Localizacao> localizacoes = candidatoIteracao.getEntidade().getLocalizacoes();
@@ -212,7 +227,10 @@ public class AfiliacaoController {
     @PostMapping("/registar-aceite/{idCandidato}/{idPedido}")
     public ResponseEntity<?> registrarAceite(@PathVariable Integer idCandidato, @RequestBody String condicao, @PathVariable Integer idPedido){
         Candidato candidato = candidatoRepository.findById(idCandidato).get();
+        condicao = condicao.replaceAll("^\"|\"$", "");
         Optional<CondicaoTermo> condicaoTermo = condicaoTermoRepository.findByTexto(condicao);
+        System.out.println(condicaoTermo);
+        System.out.println(condicao);
         if (condicaoTermo.isEmpty()){
             return ResponseEntity.badRequest().body("Condição não encontrada");
         }
@@ -231,7 +249,15 @@ public class AfiliacaoController {
         }
 
         PedidoAfiliacao pedidoAfiliacao = pedido.get();
-        pedidoAfiliacao.getTermoDeCompromisso().setAceite(aceite);
+        TermoDeCompromisso termoDeCompromisso = pedidoAfiliacao.getTermoDeCompromisso();
+        if (termoDeCompromisso == null){
+            termoDeCompromisso = new TermoDeCompromisso();
+            termoDeCompromisso.setPedidoAfiliacao(pedidoAfiliacao);
+            pedidoAfiliacao.setTermoDeCompromisso(termoDeCompromisso);
+
+        }
+
+        termoDeCompromisso.setAceite(aceite);
         pedidoAfiliacao.setStatus("Aguardando Validação.");
         candidato.setPedidoAfiliacao(pedidoAfiliacao);
 

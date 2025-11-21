@@ -10,7 +10,7 @@ public class CondicaoTermo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Lob // Para textos longos
+    @Column // Para textos longos
     private String texto;
 
     // Muitas condições para um termo
